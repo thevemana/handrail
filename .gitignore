@@ -1,0 +1,19 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+
+# Working files that stay local, not part of the published plugin
+CLAUDE.md
+MEMORY.md
+tasks.md
+plans/
+testing-notes/
+builds.md
+backlog.md
+
+.DS_Store
+Thumbs.db
