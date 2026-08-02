@@ -137,7 +137,9 @@ real enforcement with nothing recorded about them yet. This is exactly what `har
 without asking you anything about hooks you didn't have to describe yourself. It shows the diff to
 your CLAUDE.md's §2 and §8 before writing, not the whole file.
 
-**3. Catch a rule on the fly.** Anywhere, mid-conversation, say something like:
+**3. Catch a rule on the fly.** This one asks questions back instead of saving your sentence
+verbatim, so try it with a rule you'd actually want kept. Anywhere, mid-conversation, say something
+like:
 
 ```
 From now on, always show a diff before editing a file in this repo.
@@ -288,6 +290,9 @@ A hook runs outside the model, at the tool-call layer. Claude proposes a tool ca
 the hook first, the hook returns a decision, and the harness obeys it. Claude does not get a vote.
 
 Each of the three is described the same way in the same order, so you can scan them side by side.
+The **Event** and matcher named in each row are Claude Code's own trigger point and tool filter,
+useful mainly for finding the right block in `hooks/hooks.json` if you want to change one. The
+**When it fires** description in plain English is the part that matters day to day.
 
 ### `save-plan.py`, the one to keep if you keep only one
 
