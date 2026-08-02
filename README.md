@@ -1,9 +1,11 @@
 # handrail
 
-Something to hold onto while you learn Claude Code. Six skills write and refine your global
-CLAUDE.md, capture new rules the moment they come up, and give a project a memory that survives
-between sessions, and three hooks enforce a few rules that a file of instructions can only
-politely request.
+Something to hold onto while you learn Claude Code. Six **skills** (commands you type as
+`/handrail:name`, which Claude reads and follows) write and refine your global **CLAUDE.md** (the
+file Claude reads at the start of every session for how you want it to work), capture new rules the
+moment they come up, and give a project a memory that survives between sessions. Three **hooks**
+(small scripts that run automatically, outside the model, at points Claude Code exposes) enforce a
+few rules that a file of instructions can only politely request.
 
 Everything here is optional and everything here is editable. Once installed, these files are yours.
 
@@ -48,6 +50,13 @@ save it and stop, so starting the work is a separate decision you make out loud.
 
 ## Install
 
+**Before you start:** you need Python 3 on your PATH (check with `python --version`; the hooks need
+it, the skills don't) and nothing else. `thevemana/handrail` is a public GitHub repo, so no account
+or login is required beyond having Claude Code itself running.
+
+Type both of these **inside a running Claude Code session** (they're Claude Code's own `/` commands,
+not something you run in your regular terminal):
+
 ```
 /plugin marketplace add thevemana/handrail
 /plugin install handrail@thevemana
@@ -67,9 +76,9 @@ What to expect at each step:
 The install form is `<plugin>@<marketplace>`, not a bare plugin name. Here that is
 `handrail@thevemana`: the plugin, then where it came from.
 
-The hooks need **Python 3** on your PATH. Check with `python --version`. If your system only has
-`python3`, see [Requirements and troubleshooting](#requirements-and-troubleshooting) before going
-further, because a hook that cannot start is silent about it.
+If `python --version` errors but `python3 --version` works, see
+[Requirements and troubleshooting](#requirements-and-troubleshooting) before going further. A hook
+that cannot start is silent about it.
 
 Verify the hooks before trusting them:
 
@@ -95,19 +104,21 @@ hook looks exactly like nothing happening.
 
 *You should see:* it checks what's already at `~/.claude/CLAUDE.md` first, then asks a handful of
 questions in short rounds rather than handing you a blank template. It shows you the full draft
-before writing anything. If you already have a substantial file, it should refuse to overwrite it
-and offer to help with one section instead. That refusal is a feature, so try it on purpose.
+before writing anything. A blank file or a rough handful of lines both still get the normal
+interview; it only refuses once the file looks genuinely lived-in, and then it offers to help with
+one section instead of a rewrite. That refusal is a feature, so try it on purpose.
 
 **2. Fill in what's already enforced.** Right after installing, the plugin's own three hooks are
-real enforcement with nothing recorded about them yet, which makes this a good first test:
+real enforcement with nothing recorded about them yet. This is exactly what `harden` fills in first:
 
 ```
 /handrail:harden
 ```
 
-*You should see:* it reads `~/.claude/settings.json`, finds this plugin's own hooks, and proposes
-enforcement-map rows for them without asking you anything about hooks you didn't have to describe
-yourself. It shows the diff to your CLAUDE.md's §2 and §8 before writing, not the whole file.
+*You should see:* it reads `~/.claude/settings.json`, finds this plugin's own three hooks
+(save-plan, protect-paths, block-ai-trailer), and proposes enforcement-map rows describing them
+without asking you anything about hooks you didn't have to describe yourself. It shows the diff to
+your CLAUDE.md's §2 and §8 before writing, not the whole file.
 
 **3. Catch a rule on the fly.** Anywhere, mid-conversation, say something like:
 
@@ -231,10 +242,11 @@ than no wrap, because you will trust it.
 **Reach for it when** you start working in a folder that has no `CLAUDE.md`, or when Claude keeps
 needing the same context re-explained.
 
-Creates `CLAUDE.md`, `MEMORY.md`, `tasks.md` and `plans/`, plus `backlog.md`, `CHANGELOG.md` and
-`decisions.md` if the folder is a git repo. The four files hold four different kinds of state: rules
-that rarely change, live state rewritten each session, open work as a checklist, and approved plans
-as a record. Keeping them separate is the whole trick. Mixing them is what makes such files rot.
+Creates `CLAUDE.md`, `MEMORY.md`, `tasks.md` and `plans/`, plus `README.md`, `backlog.md`,
+`CHANGELOG.md`, `decisions.md`, and `.env.example` (if the project takes secrets) if the folder is a
+git repo. The four base files hold four different kinds of state: rules that rarely change, live
+state rewritten each session, open work as a checklist, and approved plans as a record. Keeping them
+separate is the whole trick. Mixing them is what makes such files rot.
 
 It surveys the folder before writing anything, so the conventions come from what you are already
 doing rather than from a template.
@@ -277,7 +289,7 @@ get `-b`, `-c`, and so on.
 
 | | |
 |---|---|
-| **What it does** | Refuses any write to `.env`, `*.pem`, `*.key`, `id_rsa*`, `secrets/`, `credentials*`, `node_modules/` or `.git/`. `.env.example` and `.env.template` are explicitly allowed |
+| **What it does** | Refuses any write to `.env` and its variants (`.env.local`, `.env.production`, and similar), `*.pem`, `*.key`, `id_rsa*`, `secrets/`, `credentials*`, `node_modules/` or `.git/`. `.env.example` and `.env.template` are explicitly allowed |
 | **When it fires** | Before any file edit or write. Event `PreToolUse`, matcher `Edit\|Write\|NotebookEdit` |
 | **What you see** | *"Writes to `<path>` are blocked by the protect-paths hook. If this is intentional, edit PROTECTED in hooks/protect-paths.py or make the change by hand outside Claude Code."* |
 | **Why you want it** | The damage from one bad write to `.env` is not the edit, it is the commit that follows it. Paths are normalised to absolute with forward slashes first, so the patterns behave the same on Windows and macOS |
