@@ -1,13 +1,28 @@
 # handrail
 
-Something to hold onto while you learn Claude Code. Six **skills** (commands you type as
-`/handrail:name`, which Claude reads and follows) write and refine your global **CLAUDE.md** (the
-file Claude reads at the start of every session for how you want it to work), capture new rules the
-moment they come up, and give a project a memory that survives between sessions. Three **hooks**
+MIT licensed, open source.
+
+*Something to hold onto while you learn Claude Code, and worth keeping once you have.*
+
+Claude Code only knows what you tell it, and what you tell it mid-conversation does not outlive the
+session unless something writes it down. handrail is that something: six **skills** (commands you
+type as `/handrail:name`, which Claude reads and follows) write and refine your global **CLAUDE.md**
+(the file Claude reads at the start of every session for how you want it to work), catch new rules
+the moment they come up, and give a project a memory that survives between sessions. Three **hooks**
 (small scripts that run automatically, outside the model, at points Claude Code exposes) enforce a
 few rules that a file of instructions can only politely request.
 
-Everything here is optional and everything here is editable. Once installed, these files are yours.
+Everything here is optional and everything here is editable. Once installed, these files are yours:
+the hooks are plain Python in `hooks/`, readable before you trust them, and uninstalling is one
+command (see [Turning everything off](#turning-everything-off)).
+
+You could do all of this by hand: keep CLAUDE.md updated yourself, and re-explain your rules to
+Claude at the start of every session. Some people do, successfully. handrail exists for the gap
+between "I should write this down" and actually doing it while a session is moving, and for the
+handful of rules (secrets, AI commit trailers, plans that start building before you say go) that are
+worth enforcing outside the model instead of just asking for it.
+
+Want to skip the pitch? Jump straight to [Install](#install).
 
 ---
 
@@ -52,7 +67,9 @@ save it and stop, so starting the work is a separate decision you make out loud.
 
 **Before you start:** you need Python 3 on your PATH (check with `python --version`; the hooks need
 it, the skills don't) and nothing else. `thevemana/handrail` is a public GitHub repo, so no account
-or login is required beyond having Claude Code itself running.
+or login is required beyond having Claude Code itself running. Reversible any time:
+`/plugin uninstall handrail@thevemana` removes it in one command; see
+[Turning everything off](#turning-everything-off).
 
 Type both of these **inside a running Claude Code session** (they're Claude Code's own `/` commands,
 not something you run in your regular terminal):
