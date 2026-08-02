@@ -2,69 +2,37 @@
 
 MIT licensed, open source.
 
-*Something to hold onto while you learn Claude Code, and worth keeping once you have.*
+*A guiding mechanism for working with Claude Code with more confidence and speed.*
 
-Claude Code only knows what you tell it, and what you tell it mid-conversation does not outlive the
-session unless something writes it down. handrail is that something: five **skills** (commands you
-type as `/handrail:name`, which Claude reads and follows) write and refine your global **CLAUDE.md**
-(the file Claude reads at the start of every session for how you want it to work), catch new rules
-the moment they come up, and give a project a memory that survives between sessions. Three **hooks**
-(small scripts that run automatically, outside the model, at points Claude Code exposes) enforce a
-few rules that a file of instructions can only politely request.
+Already know you want this? Skip straight to [Install](#install).
 
-Everything here is optional and everything here is editable. Once installed, these files are yours:
-the hooks are plain Python in `hooks/`, readable before you trust them, and uninstalling is one
-command (see [Turning everything off](#turning-everything-off)).
+Claude Code only knows what you tell it, and it forgets the moment a session ends unless something
+writes it down. handrail is that something.
 
-You could do all of this by hand: keep CLAUDE.md updated yourself, and re-explain your rules to
-Claude at the start of every session. Some people do, successfully. handrail exists for the gap
-between "I should write this down" and actually doing it while a session is moving, and for the
-handful of rules (secrets, AI commit trailers, plans that start building before you say go) that are
-worth enforcing outside the model instead of just asking for it.
+| What gets in the way | What handrail does about it | Where |
+|---|---|---|
+| AI memory is built by hand, and goes stale the moment you close the window | A **CLAUDE.md** that says how you work, a **MEMORY.md** that survives between sessions, a `wrap` that records what happened and why | `onboard`, `scaffold`, `wrap` |
+| No receipts. You're trusting a synthesis, not seeing the work | Checks its own claims against disk before reporting done. Says exactly where two documents disagree instead of picking a winner | `wrap`, `consolidate-folder` |
+| A new vocabulary to learn every time the field moves | Five **skills** (commands you type as `/handrail:name`), small interviews instead of a blank template, distilled from practices tested across many people | `onboard`, the whole skill set |
+| Claude's pace and tone don't match yours, and you can't make it adapt | Interviews for pace and tone once, and lets any new preference become a standing rule | `onboard`, `codify` |
+| Mid-conversation you say "always do it this way," and it's gone by next session | Catches the sentence, asks a few short questions, routes it to the right home on its own | `codify` |
 
-Want to skip the pitch? Jump straight to [Install](#install).
+You could do this by hand, keep CLAUDE.md updated yourself, some people do. handrail is for closing
+the gap between meaning to and actually doing it while a session is moving.
 
----
-
-## Why is this useful?
-
-Six situations, each one the reason a specific piece of this exists.
-
-**Mid-conversation, you say "always do it this way from now on," and it evaporates the moment the
-session ends.** `codify` catches that sentence, asks a few short questions to make it a well-formed
-rule instead of a raw quote, and routes it to the right home on its own: your global CLAUDE.md, a
-project's, a scoped rule file, or a flag that it actually needs a hook instead.
-
-**You install Claude Code and don't know what to put in `CLAUDE.md`.** A blank file gives you
-nothing, a full template asks you to already know what you want. `onboard` interviews you a few
-questions at a time and writes a real, personal first file instead.
-
-**You finish a session, and next time Claude has forgotten everything.** Not just the code, the
-decisions. Why you rejected the obvious approach, what you already tried that did not work, what you
-were about to do next. You re-explain it, or you re-derive it. `wrap` writes it down before the
-session ends.
-
-**You open a folder you have not touched in three months and Claude starts from zero.** It reads the
-code fine, but the code does not say what the conventions are or which file is the one that matters.
-`scaffold` gives the folder four small files that carry that between sessions.
-
-**Eleven documents about the same thing, and no way to tell which one is current.** Somewhere in
-there two of them contradict each other, and finding that out later is expensive.
-`consolidate-folder` merges them and says exactly where they disagree.
-
-**You approve a plan and it immediately starts building**, when you only meant *yes, that is right*.
-There was no keystroke that meant one without the other. The `save-plan` hook makes approving a plan
-save it and stop, so starting the work is a separate decision you make out loud.
+Everything here is optional and everything here is editable. Once installed, these files are yours.
 
 ---
 
 ## Install
 
-**Before you start:** you need Python 3 on your PATH (check with `python --version`; the hooks need
-it, the skills don't) and nothing else. `thevemana/handrail` is a public GitHub repo, so no account
-or login is required beyond having Claude Code itself running. Reversible any time:
-`/plugin uninstall handrail@thevemana` removes it in one command; see
-[Turning everything off](#turning-everything-off).
+**Before you start:** you need Claude Code itself running, and nothing else, `thevemana/handrail` is
+a public GitHub repo, so no account or login is required. (The three hooks need Python 3; see
+[Hooks, if you want enforcement](#hooks-if-you-want-enforcement) below, skills work without it.)
+Nothing here calls out to any external service: the hooks are local scripts that only read stdin
+and check file paths, and the skills add no network behavior beyond what your Claude Code session
+already does. Reversible any time: `/plugin uninstall handrail@thevemana` removes it in one command;
+see [Turning everything off](#turning-everything-off).
 
 Type both of these **inside a running Claude Code session** (they're Claude Code's own `/` commands,
 not something you run in your regular terminal):
@@ -88,25 +56,11 @@ What to expect at each step:
 The install form is `<plugin>@<marketplace>`, not a bare plugin name. Here that is
 `handrail@thevemana`: the plugin, then where it came from.
 
-If `python --version` errors but `python3 --version` works, see
-[Requirements and troubleshooting](#requirements-and-troubleshooting) before going further. A hook
-that cannot start is silent about it.
-
-Verify the hooks before trusting them:
-
-```
-python test-hooks.py
-```
-
-Expect `20/20 passed`. This runs the hook logic directly, so it proves the code works. It does not
-prove the wiring works. For that, see the live checks in the next section.
-
 ---
 
-## How do I play with it?
+## Try it
 
-Five minutes, eight things to type. Each one says what you should see, because a silently broken
-hook looks exactly like nothing happening.
+Five minutes, five things to type. Each one says what you should see.
 
 **1. Write your global CLAUDE.md.** If you don't have one yet, or only have a thin first attempt:
 
@@ -125,7 +79,7 @@ verbatim, so try it with a rule you'd actually want kept. Anywhere, mid-conversa
 like:
 
 ```
-From now on, always show a diff before editing a file in this repo.
+From now on, always show me exactly what's about to change before you edit a file in this repo.
 ```
 
 *You should see:* it asks a few short questions (does this apply everywhere or just here, what
@@ -143,7 +97,9 @@ where it's landing before writing anything.
 conventions your folder actually uses, not a generic template. If it reads generic, tell it what it
 missed. The file is yours to correct.
 
-**4. End a session properly.** Do a bit of real work first, then:
+**4. Close a session properly.** Once you've done substantial work, something building toward a
+real decision or milestone, wrapping it up is worth the habit: it keeps a running record of what
+you decided and why, not just what changed. After a bit of that kind of work, try:
 
 ```
 /handrail:wrap
@@ -163,28 +119,8 @@ section that pays for itself, because a recorded dead end stops you walking into
 one long document. **Read the contradictions section first.** That is the part you could not have
 got by reading the files yourself.
 
-**6. Watch a hook refuse you.** Ask Claude to write something to a file called `.env`:
-
-```
-Create a .env file in this folder with API_KEY=test
-```
-
-*You should see:* a refusal, not a file. The message begins *"Writes to … are blocked by the
-protect-paths hook."* If a `.env` file appears instead, the hook is not wired up. Go to
-[troubleshooting](#requirements-and-troubleshooting).
-
-**7. Watch the commit hook.** In a git repo with something staged, ask for a commit message carrying
-`Co-Authored-By: Claude <noreply@anthropic.com>`.
-
-*You should see:* the commit denied, with a message explaining the project does not use AI co-author
-trailers. Note what is *not* blocked: `git log | grep Co-Authored-By` still runs fine, because
-auditing for the trailer is how you find out whether you have the problem.
-
-**8. Watch a plan stop.** Ask Claude to plan something non-trivial, and approve the plan.
-
-*You should see:* the turn end immediately, with *"Plan saved to plans/…. Say the word when ready to
-execute."* No implementation starts. There should be a new dated file in `plans/`. Saying "go ahead"
-is what starts the work.
+Want to see the hooks refuse you? [docs/hooks.md](docs/hooks.md#try-them-yourself) has three more
+things to try.
 
 ---
 
@@ -254,90 +190,25 @@ navigable and complete, not short. Reads markdown, text, Word, PowerPoint, Excel
 
 ---
 
-## The three hooks
+## Hooks, if you want enforcement
 
-A hook runs outside the model, at the tool-call layer. Claude proposes a tool call, the harness runs
-the hook first, the hook returns a decision, and the harness obeys it. Claude does not get a vote.
+Skills are things you ask for. Hooks are things that happen whether you ask or not, which is why
+they matter for the handful of rules you can't afford to have skipped.
 
-Each of the three is described the same way in the same order, so you can scan them side by side.
-The **Event** and matcher named in each row are Claude Code's own trigger point and tool filter,
-useful mainly for finding the right block in `hooks/hooks.json` if you want to change one. The
-**When it fires** description in plain English is the part that matters day to day.
+Three small Python scripts do this: saving an approved plan before it starts building, refusing
+writes to `.env` and other secrets, and keeping AI attribution out of commit messages.
 
-### `save-plan.py`, the one to keep if you keep only one
+They need Python 3 on your PATH (check with `python --version`). If you don't have it, four of the
+five skills still work exactly as described, you just don't get these three, the exception is
+`consolidate-folder`'s inventory helper (see
+[Requirements and troubleshooting](#requirements-and-troubleshooting)).
 
-| | |
-|---|---|
-| **What it does** | Saves an approved plan to `plans/YYYY-MM-DD-<slug>.md`, then ends the turn |
-| **When it fires** | The moment you approve a plan. Event `PostToolUse`, matcher `ExitPlanMode` |
-| **What you see** | *"Plan saved to plans/2026-08-02-your-plan.md. Say the word when ready to execute."* and the turn stops. A re-approved identical plan says *"Plan already saved (identical)"* rather than writing a second copy |
-| **Why you want it** | Without it, "yes, that plan is right" and "go build it" are the same keystroke, which is only what you meant some of the time. It also means every approved plan exists as a file you can come back to next week |
-| **Turning it off** | Delete the `PostToolUse` block from `hooks/hooks.json`. **Or turn off half of it:** delete the three `control` keys at the top of `main()` in `hooks/save-plan.py` to keep the plan-saving and drop only the stop |
-
-The slug comes from the plan's own `# Plan:` heading. Two plans with the same title on the same day
-get `-b`, `-c`, and so on.
-
-### `protect-paths.py`, which refuses writes to files you never want touched
-
-| | |
-|---|---|
-| **What it does** | Refuses any write to `.env` and its variants (`.env.local`, `.env.production`, and similar), `*.pem`, `*.key`, `id_rsa*`, `secrets/`, `credentials*`, `node_modules/` or `.git/`. `.env.example` and `.env.template` are explicitly allowed |
-| **When it fires** | Before any file edit or write. Event `PreToolUse`, matcher `Edit\|Write\|NotebookEdit` |
-| **What you see** | *"Writes to `<path>` are blocked by the protect-paths hook. If this is intentional, edit PROTECTED in hooks/protect-paths.py or make the change by hand outside Claude Code."* |
-| **Why you want it** | The damage from one bad write to `.env` is not the edit, it is the commit that follows it. Paths are normalised to absolute with forward slashes first, so the patterns behave the same on Windows and macOS |
-| **Turning it off** | Delete its block from `hooks/hooks.json`. More useful: edit the `PROTECTED` and `ALLOWED` lists at the top of `hooks/protect-paths.py`, both plain glob lists meant to be edited |
-
-### `block-ai-trailer.py`, which keeps AI attribution out of commit metadata
-
-| | |
-|---|---|
-| **What it does** | Refuses a `git commit` whose message carries a `Co-Authored-By: Claude` trailer, including one hidden in a `-F` or `--file` message file |
-| **When it fires** | Before any shell command that creates a commit. Event `PreToolUse`, matcher `Bash\|PowerShell` |
-| **What you see** | *"This commit message carries an AI co-author trailer, which this project does not use. Credit AI in the README or a tech-stack section… Remove the trailer and re-run the commit."* |
-| **Why you want it** | If you would rather credit AI once in your README than in every commit's metadata forever. Reading history for the trailer stays allowed on purpose, since `git log \| grep Co-Authored-By` is how you find out whether you already have hundreds of them |
-| **Turning it off** | Delete its `Bash\|PowerShell` block from `hooks/hooks.json` |
-
-If you want this behaviour without a hook, the native setting is `attribution.commit: ""` in
-`settings.json`. This hook is the backstop for a hand-written trailer or a settings file that gets
-reverted.
-
-### A note on disabling
-
-Two things people get wrong:
-
-- **Deleting the `.py` file is not how you turn a hook off.** The entry in `hooks/hooks.json` is what
-  wires it up. Without the script it just fails, and a failing hook is noise rather than absence.
-  Delete the block from `hooks/hooks.json`.
-- **Re-enabling needs a reload.** Restore the block, then run `/reload-plugins` or restart. Skipping
-  that step is the usual reason someone concludes the hook is broken.
-
----
-
-## Why hooks and not just instructions
-
-You can write rules in `CLAUDE.md` and Claude will mostly follow them. Mostly is the problem.
-
-Anthropic's own documentation puts it plainly: *"Unlike CLAUDE.md instructions which are advisory,
-hooks are deterministic and guarantee the action happens."* Adherence also gets worse as the file
-grows, because the chance a session honours **every** rule falls as you add rules. A long instruction
-file is not a safety mechanism.
-
-So the split is:
-
-- **A rule where being ignored costs a correction** belongs in `CLAUDE.md`. Cheap to write, fine at
-  advisory reliability.
-- **A rule where being ignored once causes real damage** belongs in a hook. Committing a secret,
-  pushing to main, deleting data, overwriting a file you needed.
-
-That is the same test used to decide what went in this plugin. The five skills describe how to do
-something, the three hooks describe what must not happen.
+Full reference, what each hook does, how to turn any of them off, and why hooks exist at all instead
+of just more CLAUDE.md rules: [docs/hooks.md](docs/hooks.md).
 
 ---
 
 ## Turning everything off
-
-**All three hooks, keeping the skills.** Replace the contents of `hooks/hooks.json` with `{}`, then
-`/reload-plugins`. The skills are unaffected, since nothing references the hooks.
 
 **One skill.** Delete its folder under `skills/`. Skills are auto-discovered, so there is no list to
 update.
@@ -345,38 +216,21 @@ update.
 **The whole plugin.** `/plugin uninstall handrail@thevemana`. To also drop the marketplace entry,
 `/plugin marketplace remove thevemana`.
 
+**Just the hooks, keeping the skills?** See [docs/hooks.md](docs/hooks.md#a-note-on-disabling).
+
 ---
 
 ## Requirements and troubleshooting
 
-**Python 3 on your PATH.** The skills work without it. The hooks and `consolidate-folder`'s inventory
-script do not.
+**Skills work with nothing extra installed.** No Python, no account beyond Claude Code itself,
+nothing to configure.
 
-**If your system uses `python3` rather than `python`,** edit `hooks/hooks.json` and change `python` to
-`python3` in all three `command` lines, then `/reload-plugins`. On Windows, `python` is usually right.
-On macOS and most Linux distributions, `python3` is. Check with `python --version`: if that errors but
-`python3 --version` works, you need the edit. This is the single most common install problem, and it
-is invisible. A hook whose interpreter does not exist fails to start, and a hook that fails to start
-blocks nothing.
+**Python 3 is only needed for the three hooks** (and `consolidate-folder`'s inventory script). Check
+with `python --version`. If it errors, or you want to know exactly what each hook does and how to
+turn one off, see [docs/hooks.md](docs/hooks.md).
 
-**Telling a working hook from a silently broken one.** This is the important one. A hook with a wrong
-path does nothing at all, which is indistinguishable from a hook that is working and simply has not
-found anything to object to. The only reliable check is to make one fire on purpose:
-
-```
-Create a .env file in this folder with API_KEY=test
-```
-
-A refusal means the wiring is good. A created file means it is not. `python test-hooks.py` passing
-`20/20` tells you the logic is sound but says nothing about whether Claude Code is calling it. The
-two failures look identical from the outside, which is why both checks are worth running.
-
-**Skills not appearing after install.** Restart, or `/reload-plugins`. Typing `/handrail` should offer
-all three.
-
-**If you already run your own AI-trailer hook globally,** this plugin's will run alongside it and both
-will deny the same commit. That is harmless, since two denials are one denial, but the doubled message
-reads like a bug if nobody tells you. Drop whichever copy you prefer.
+**Skills not appearing after install.** Restart, or `/reload-plugins`. Typing `/handrail` should
+offer all five.
 
 ---
 
