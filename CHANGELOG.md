@@ -13,10 +13,6 @@ First release. Never previously published under any name.
 - **`/handrail:onboard`**. Writes a first `~/.claude/CLAUDE.md` by interviewing the user in five
   short rounds against a portable template, rather than handing over a blank file. Refuses to
   overwrite an existing, substantial file.
-- **`/handrail:harden`**. Revisits a CLAUDE.md `onboard` already wrote, once there's real
-  enforcement to document: surveys installed hooks and skills first, then fills in the enforcement
-  map and extension sections with what it found rather than asking the user to redescribe their
-  own settings. Documents enforcement; does not generate or wire a new hook.
 - **`/handrail:codify`**. Turns a mid-session "always do it this way" into a well-formed rule
   instead of a raw quote: interviews it into scope, trigger, the rule, an exception, and an
   expectation, then routes it to one of four homes: the global CLAUDE.md, a `~/.claude/rules/`

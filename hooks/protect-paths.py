@@ -56,7 +56,11 @@ def main():
     except (json.JSONDecodeError, ValueError):
         sys.exit(0)  # never block on a hook bug
 
-    raw = payload.get("tool_input", {}).get("file_path", "")
+    # Edit and Write pass "file_path"; NotebookEdit passes "notebook_path".
+    # Reading only the first silently allows every notebook edit, which looks
+    # exactly like a hook that ran and found nothing to object to.
+    tool_input = payload.get("tool_input", {}) or {}
+    raw = tool_input.get("file_path") or tool_input.get("notebook_path") or ""
     if not raw:
         sys.exit(0)
 

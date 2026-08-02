@@ -57,6 +57,9 @@ section that already matches its kind (a guardrail → §3, a pace preference �
 bullet, not a labelled Scope/Trigger/Rule block. The five fields from Step 2 are what make sure the
 rule is well-formed before it's written; they don't have to survive as visible labels here.
 
+Bump the file's `Last updated:` line to today in the same edit. A rule appears in a file whose date
+says it hasn't changed in months, and the next reader trusts the date over the content.
+
 **B. Applies everywhere, but only when a specific file pattern is touched → `~/.claude/rules/`.**
 Check first for an existing file there whose `paths:` already covers the same pattern, and append
 rather than creating a near-duplicate. Create `~/.claude/rules/` if it doesn't exist yet — this may
@@ -68,14 +71,27 @@ is single-topic and self-contained, so the structure earns its space:
 paths:
   - "<glob pattern>"        # this is Scope, made mechanical
 ---
+# <topic>
+Last updated: YYYY-MM-DD
 
-# <Rule name>
-
+## <Rule name>
+**Added:** YYYY-MM-DD
 **Trigger:** <the specific situation or action, within the paths above, that activates this>
 **Rule:** <the guidance itself, stated as an instruction>
 **Exception:** <when it doesn't apply — or "none stated" if the user confirmed there isn't one>
 **Expectation:** <what following this looks like, or how a miss would be noticed>
 ```
+
+**Naming the file.** Name it after what the glob governs, kebab-case, singular: `**/*.yaml` →
+`yaml.md`, `migrations/**` → `migrations.md`, `**/*.test.ts` → `tests.md`. When the pattern has no
+obvious subject, name it after the rule's topic instead. The point is that the next rule about the
+same thing lands in the same file by default rather than by luck, which is what makes the
+check-before-creating step above actually work.
+
+**Dates are not decoration here.** A rule you can't date is a rule you can't audit. `**Added:**`
+tells you how long it has been in force, which is the first thing you need when deciding whether a
+rule that keeps getting in the way was a good idea. Update the file's `Last updated:` line whenever
+you append. Use today's real date; never invent one or copy the date from another entry.
 
 **C. One miss would cause real damage → not a rule at all, regardless of what Scope said.** Say so
 plainly: this belongs in a hook, which this skill does not write. If it resembles what

@@ -122,10 +122,14 @@ Tell the person where the file landed, and that the next real signal is watching
 actually follows the guardrails round in a real session — that's the test a template sitting on
 disk can't run for itself.
 
-**Then say this explicitly, don't leave it implied:** `~/.claude/settings.json` already has this
-plugin's own three hooks installed from the moment handrail was installed, so §2 and §8 of the file
-just written are correct but empty of them. Offer to run `/handrail:harden` right now, same
-session, to fill those in — it's not a someday step, it already has real content to work with.
+**Then say this explicitly, don't leave it implied:** §2 (the enforcement map) and §8 (how the system
+extends) are deliberately thin in a first file, because on day one there is usually nothing installed
+to describe. They are the sections to come back to once real hooks or skills exist, and the file is
+theirs to edit directly when that day arrives.
+
+One exception worth naming while writing it: handrail's own three hooks are live from the moment the
+plugin is installed, so §2 has at least three honest rows available immediately. Offer to add them,
+naming what each one refuses.
 
 ---
 

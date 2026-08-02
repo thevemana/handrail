@@ -5,7 +5,7 @@ MIT licensed, open source.
 *Something to hold onto while you learn Claude Code, and worth keeping once you have.*
 
 Claude Code only knows what you tell it, and what you tell it mid-conversation does not outlive the
-session unless something writes it down. handrail is that something: six **skills** (commands you
+session unless something writes it down. handrail is that something: five **skills** (commands you
 type as `/handrail:name`, which Claude reads and follows) write and refine your global **CLAUDE.md**
 (the file Claude reads at the start of every session for how you want it to work), catch new rules
 the moment they come up, and give a project a memory that survives between sessions. Three **hooks**
@@ -28,7 +28,7 @@ Want to skip the pitch? Jump straight to [Install](#install).
 
 ## Why is this useful?
 
-Seven situations, each one the reason a specific piece of this exists.
+Six situations, each one the reason a specific piece of this exists.
 
 **Mid-conversation, you say "always do it this way from now on," and it evaporates the moment the
 session ends.** `codify` catches that sentence, asks a few short questions to make it a well-formed
@@ -38,11 +38,6 @@ project's, a scoped rule file, or a flag that it actually needs a hook instead.
 **You install Claude Code and don't know what to put in `CLAUDE.md`.** A blank file gives you
 nothing, a full template asks you to already know what you want. `onboard` interviews you a few
 questions at a time and writes a real, personal first file instead.
-
-**Weeks later, you've actually installed hooks and skills, and your CLAUDE.md still says none of
-it exists.** `onboard` deliberately leaves the enforcement map and extension sections thin, because
-nothing was real yet. `harden` comes back once something is, and records what's actually enforced
-versus what's still just written down.
 
 **You finish a session, and next time Claude has forgotten everything.** Not just the code, the
 decisions. Why you rejected the obvious approach, what you already tried that did not work, what you
@@ -88,7 +83,7 @@ What to expect at each step:
 |---|---|
 | `marketplace add` | A confirmation naming the marketplace `thevemana` and the plugins it found (one: `handrail`) |
 | `install` | A confirmation that `handrail` is installed, and a prompt to restart or reload |
-| after the restart | Typing `/handrail` offers `onboard`, `harden`, `codify`, `wrap`, `scaffold` and `consolidate-folder` |
+| after the restart | Typing `/handrail` offers `onboard`, `codify`, `wrap`, `scaffold` and `consolidate-folder` |
 
 The install form is `<plugin>@<marketplace>`, not a bare plugin name. Here that is
 `handrail@thevemana`: the plugin, then where it came from.
@@ -110,7 +105,7 @@ prove the wiring works. For that, see the live checks in the next section.
 
 ## How do I play with it?
 
-Five minutes, nine things to type. Each one says what you should see, because a silently broken
+Five minutes, eight things to type. Each one says what you should see, because a silently broken
 hook looks exactly like nothing happening.
 
 **1. Write your global CLAUDE.md.** If you don't have one yet, or only have a thin first attempt:
@@ -125,19 +120,7 @@ before writing anything. A blank file or a rough handful of lines both still get
 interview; it only refuses once the file looks genuinely lived-in, and then it offers to help with
 one section instead of a rewrite. That refusal is a feature, so try it on purpose.
 
-**2. Fill in what's already enforced.** Right after installing, the plugin's own three hooks are
-real enforcement with nothing recorded about them yet. This is exactly what `harden` fills in first:
-
-```
-/handrail:harden
-```
-
-*You should see:* it reads `~/.claude/settings.json`, finds this plugin's own three hooks
-(save-plan, protect-paths, block-ai-trailer), and proposes enforcement-map rows describing them
-without asking you anything about hooks you didn't have to describe yourself. It shows the diff to
-your CLAUDE.md's §2 and §8 before writing, not the whole file.
-
-**3. Catch a rule on the fly.** This one asks questions back instead of saving your sentence
+**2. Catch a rule on the fly.** This one asks questions back instead of saving your sentence
 verbatim, so try it with a rule you'd actually want kept. Anywhere, mid-conversation, say something
 like:
 
@@ -149,7 +132,7 @@ From now on, always show a diff before editing a file in this repo.
 would a miss actually cost) rather than pasting your sentence straight into a file, then tells you
 where it's landing before writing anything.
 
-**4. Scaffold a project.** Pick any project folder, open Claude Code there, and type:
+**3. Scaffold a project.** Pick any project folder, open Claude Code there, and type:
 
 ```
 /handrail:scaffold
@@ -160,7 +143,7 @@ where it's landing before writing anything.
 conventions your folder actually uses, not a generic template. If it reads generic, tell it what it
 missed. The file is yours to correct.
 
-**5. End a session properly.** Do a bit of real work first, then:
+**4. End a session properly.** Do a bit of real work first, then:
 
 ```
 /handrail:wrap
@@ -170,7 +153,7 @@ missed. The file is yours to correct.
 in chat naming where it landed. Open the file and read the **What Went Wrong** table. That is the
 section that pays for itself, because a recorded dead end stops you walking into it twice.
 
-**6. Consolidate a folder of notes.** Point it at a folder you already have:
+**5. Consolidate a folder of notes.** Point it at a folder you already have:
 
 ```
 /handrail:consolidate-folder ~/notes/some-project
@@ -180,7 +163,7 @@ section that pays for itself, because a recorded dead end stops you walking into
 one long document. **Read the contradictions section first.** That is the part you could not have
 got by reading the files yourself.
 
-**7. Watch a hook refuse you.** Ask Claude to write something to a file called `.env`:
+**6. Watch a hook refuse you.** Ask Claude to write something to a file called `.env`:
 
 ```
 Create a .env file in this folder with API_KEY=test
@@ -190,14 +173,14 @@ Create a .env file in this folder with API_KEY=test
 protect-paths hook."* If a `.env` file appears instead, the hook is not wired up. Go to
 [troubleshooting](#requirements-and-troubleshooting).
 
-**8. Watch the commit hook.** In a git repo with something staged, ask for a commit message carrying
+**7. Watch the commit hook.** In a git repo with something staged, ask for a commit message carrying
 `Co-Authored-By: Claude <noreply@anthropic.com>`.
 
 *You should see:* the commit denied, with a message explaining the project does not use AI co-author
 trailers. Note what is *not* blocked: `git log | grep Co-Authored-By` still runs fine, because
 auditing for the trailer is how you find out whether you have the problem.
 
-**9. Watch a plan stop.** Ask Claude to plan something non-trivial, and approve the plan.
+**8. Watch a plan stop.** Ask Claude to plan something non-trivial, and approve the plan.
 
 *You should see:* the turn end immediately, with *"Plan saved to plans/…. Say the word when ready to
 execute."* No implementation starts. There should be a new dated file in `plans/`. Saying "go ahead"
@@ -205,7 +188,7 @@ is what starts the work.
 
 ---
 
-## The six skills
+## The five skills
 
 ### `/handrail:onboard`
 
@@ -218,19 +201,6 @@ Claude acts, how you want it to talk to you, and whether you already keep any ki
 notes. Skips any round that produces nothing usable rather than padding the file with a generic
 placeholder, and shows the full draft before writing it. Refuses to overwrite a file that already
 looks lived-in.
-
-### `/handrail:harden`
-
-**Reach for it when** `onboard` just wrote your CLAUDE.md. Run it in the same session, not
-someday: this plugin's own three hooks are already installed the moment handrail is, so there's
-real content to document from the start. Come back to it again later whenever a new hook or skill
-gets added and the file should catch up.
-
-Reads `~/.claude/settings.json` and `~/.claude/skills/` first, so it can propose enforcement-map
-rows for hooks you already have without asking you to describe them yourself. Only asks about what
-the survey couldn't answer on its own. Shows the diff to the two sections it touches, not the whole
-file, and names any guardrail that still has no real enforcement behind it rather than marking it
-`Instruction` quietly. It documents enforcement; it does not build a hook for you.
 
 ### `/handrail:codify`
 
@@ -359,7 +329,7 @@ So the split is:
 - **A rule where being ignored once causes real damage** belongs in a hook. Committing a secret,
   pushing to main, deleting data, overwriting a file you needed.
 
-That is the same test used to decide what went in this plugin. The six skills describe how to do
+That is the same test used to decide what went in this plugin. The five skills describe how to do
 something, the three hooks describe what must not happen.
 
 ---

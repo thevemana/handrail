@@ -1,4 +1,4 @@
-# CLAUDE.md — global
+# CLAUDE.md (global)
 # Applies to every project. Project-level CLAUDE.md overrides this on project-specific matters;
 # this file wins on working style, verification, and safety.
 Last updated: YYYY-MM-DD
@@ -7,11 +7,11 @@ Last updated: YYYY-MM-DD
 
 ## 1. Identity and standing context
 
-[Who you are in one or two sentences — enough that Claude knows what "good" looks like for you.]
+[Who you are in one or two sentences, enough that Claude knows what "good" looks like for you.]
 
 [The entities, teams, or domains your work splits across.]
 
-**Standing assumptions** — apply unless a project says otherwise:
+**Standing assumptions.** These apply unless a project says otherwise:
 - [Geography / timezone / units]
 - [Anything else you'd otherwise repeat every session]
 
@@ -25,7 +25,7 @@ fine for safety. This table records which of my rules are actually enforced and 
 | Rule | Tier | Mechanism | Verified |
 |---|---|---|---|
 | [rule] | Enforced | [hook file / settings.json field] | YYYY-MM-DD |
-| [rule] | Instruction | this file, §N | — |
+| [rule] | Instruction | this file, §N | n/a |
 
 **Triage rule for anything new:**
 - Can this afford occasional non-compliance? → write it in this file.
@@ -40,7 +40,7 @@ When a task needs a hard stop that doesn't exist yet, say so rather than promisi
 Things that must not happen, regardless of what I asked for.
 
 **Filesystem**
-- [Which paths are in bounds. Be explicit — "the project" is not a boundary.]
+- [Which paths are in bounds. Be explicit. "The project" is not a boundary.]
 - Before deleting, overwriting, or renaming: show exactly what changes and wait for confirmation.
 - Show a before/after diff for any edit to an existing file.
 - State the full target path before writing outside the current working directory.
@@ -57,18 +57,18 @@ Things that must not happen, regardless of what I asked for.
 
 ## 4. Truth discipline
 
-**Verification.** Before reporting any task complete, run the actual check — test suite, linter, type
+**Verification.** Before reporting any task complete, run the actual check: test suite, linter, type
 checker, compile, or the script against real input. Do not report done from memory. If verification
 isn't possible, say so explicitly and tell me what manual check to run.
 
-**A status is a claim, not a fact.** Anything written in a doc — a status table, a plan header, a
-"done" line in a wrap-up, a memory entry — is a claim about an artifact, not the artifact. Verify it
+**A status is a claim, not a fact.** Anything written in a doc (a status table, a plan header, a
+"done" line in a wrap-up, a memory entry) is a claim about an artifact, not the artifact. Verify it
 against the thing itself before building on it. When a status can't be cheaply verified, say it's
 unverified rather than repeating it as fact. When a decision makes a doc wrong, fix the doc in the
 same conversation.
 
-**Show the real output, don't describe it.** For anything rendered, parsed, or generated — a report,
-a page, a table, a generated file — produce the actual artifact or a real-data sample before claiming
+**Show the real output, don't describe it.** For anything rendered, parsed, or generated (a report,
+a page, a table, a generated file), produce the actual artifact or a real-data sample before claiming
 done. Abstract self-review reliably misses what concrete output reveals.
 
 **Pushback.** Push back when something is wrong, incomplete, or likely to create downstream problems.
@@ -86,11 +86,11 @@ wrong, say so *before* classifying obediently against it.
 
 **The planning gate.** For any non-trivial task:
 1. State what you understand the goal to be.
-2. Outline the approach — files touched, key decisions, edge cases.
+2. Outline the approach: files touched, key decisions, edge cases.
 3. Wait for explicit approval before executing.
 4. Summarize after each discrete unit of work.
 
-**Non-trivial means:** [define it concretely — e.g. new files over ~N lines, changes spanning more
+**Non-trivial means:** [define it concretely, e.g. new files over ~N lines, changes spanning more
 than one file, architectural changes, more than one reasonable approach, any dependency change.]
 
 For simple, clearly scoped tasks: execute directly, lead with the output.
@@ -121,10 +121,10 @@ The set of files that carry state between sessions, and which one owns what.
 | [`plans/`] | [Approved plan-mode output] | [One file per plan] |
 | [add your own] | | |
 
-**Cascade rule.** [How your files nest — does a parent aggregate its children, or point at them?
+**Cascade rule.** [How your files nest. Does a parent aggregate its children, or point at them?
 Pick one and state it. Pointing scales; aggregating drifts.]
 
-**One owner per fact.** When a fact could drift — a rule, a timing, a status — one file owns it and
+**One owner per fact.** When a fact could drift (a rule, a timing, a status) one file owns it and
 the others link to it. A dated snapshot that cites its source is fine; an undated restatement is not.
 
 **At session start:** [what to read, in what order, before assuming there's no outstanding work.]
@@ -134,7 +134,7 @@ the others link to it. A dated snapshot that cites its source is fine; an undate
 ## 7. Output standards
 
 **Tone**
-- To me: [direct / formal / terse — say it plainly.]
+- To me: [direct / formal / terse. Say it plainly.]
 - In external deliverables: [how this differs.]
 
 **Format by output type**
@@ -142,7 +142,7 @@ the others link to it. A dated snapshot that cites its source is fine; an undate
 | Output | Format |
 |---|---|
 | Code under ~20 lines | Inline |
-| Code over ~20 lines, or a standalone deliverable | File — state the path first |
+| Code over ~20 lines, or a standalone deliverable | File. State the path first |
 | [notes / docs] | [.md] |
 | [formal external] | [.docx / .pdf] |
 | [data] | [.csv / .xlsx] |
@@ -152,13 +152,13 @@ the others link to it. A dated snapshot that cites its source is fine; an undate
 - Prefer explicit over clever.
 - No dead code, commented-out blocks, or TODO stubs unless asked.
 - When fixing a bug, state the cause after writing the fix.
-- One kind of change at a time — never mix structural and behavioral.
+- One kind of change at a time. Never mix structural and behavioral.
 - Do not rewrite whole files for targeted edits.
 - Do not add unrequested features or "while I'm here" changes.
 
 **When explaining a system or model**
 - Open with one line naming the mental model chosen, so I can redirect it before the long output exists.
-- Prefer tables and diagrams over prose — structure I can falsify.
+- Prefer tables and diagrams over prose, structure I can falsify.
 - Separate what you actually read from what you assumed.
 - Invite one correction, not a menu. Apply corrections as deltas; never restart.
 
@@ -173,7 +173,7 @@ the others link to it. A dated snapshot that cites its source is fine; an undate
 **Skills.** [Where they live. What qualifies as a skill vs. a one-off. Whether you build them cold or
 only after running the workflow by hand N times.]
 
-**Subagents and fan-out.** [Model tier policy — what work is allowed to inherit your top-tier model
+**Subagents and fan-out.** [Model tier policy: what work is allowed to inherit your top-tier model
 and what must not. Large fan-outs on an expensive model are the single easiest way to burn a budget
 by accident.]
 
@@ -183,7 +183,7 @@ by accident.]
 
 ---
 
-## 9. Scope — what this file does not cover
+## 9. Scope: what this file does not cover
 
 - [Things deliberately elsewhere, with pointers.]
 - Project-specific context belongs in the project CLAUDE.md.
@@ -195,5 +195,5 @@ by accident.]
 
 - Review this file [cadence]. Delete rules that have never fired.
 - When a rule changes materially, archive the prior version with the date it was retired and why.
-- When a rule earns enforcement, move it to a hook and leave a pointer here — don't keep both as
+- When a rule earns enforcement, move it to a hook and leave a pointer here. Don't keep both as
   independent copies.

@@ -6,15 +6,19 @@ venv/
 .env.*
 !.env.example
 
-# Working files that stay local, not part of the published plugin
-CLAUDE.md
-MEMORY.md
-tasks.md
-plans/
-testing-notes/
-builds.md
-backlog.md
-_wrap-ups/
+# Working files that stay local, not part of the published plugin.
+# Leading slash on every entry: these must match at the repo root only. Unanchored,
+# they would also match a file a skill ships (e.g. skills/*/CLAUDE.md as an example),
+# silently excluding it from the published plugin.
+/CLAUDE.md
+/MEMORY.md
+/tasks.md
+/decisions.md
+/plans/
+/testing-notes/
+/builds.md
+/backlog.md
+/_wrap-ups/
 
 .DS_Store
 Thumbs.db

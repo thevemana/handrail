@@ -29,7 +29,9 @@ rarely change, **live state** that is rewritten each session, **open work** as a
 **Do not start from the template.** The template is the floor. The value is in what the folder is
 already doing that nobody has written down.
 
-1. **List the folder,** including subfolders one level down.
+1. **List the folder,** including subfolders one level down. One level is deliberate here: this pass
+   is about reading content to derive conventions, and it gets expensive fast. Step 5 goes deeper,
+   but only looking for `CLAUDE.md` files, which is cheap.
 2. **Read the first 5 to 10 lines of every existing file.** Headers reveal conventions faster than
    full reads and cost far less context. Look for:
    - Naming patterns. Are files dated (`topic-YYYY-MM-DD.md`) or not? A date usually means "frozen
@@ -41,7 +43,13 @@ already doing that nobody has written down.
 4. **Check for files that already do one of the four jobs** under a different name. An
    `ideas.md`, a `todo.txt`, a `notes-to-self.md` is usually a `tasks.md` or a `MEMORY.md` that
    nobody named. Fold it in rather than creating a competing second list.
-5. **Read the parent folder's `CLAUDE.md`** if one exists, so the new file does not repeat it.
+5. **Map the `CLAUDE.md` chain, three levels each way.** Walk up to three parent folders and down to
+   three levels of subfolders, and record every `CLAUDE.md` you find and every one you don't. Stop
+   early going up at a repo root, a home directory, or a drive root — never walk past one. Read the
+   ones you find, nearest first, so the new file repeats none of them. What you are building is a
+   picture of where this folder sits in an existing chain, which decides almost everything below.
+   Report the map before proposing anything, as a list of paths with `has CLAUDE.md` / `none`
+   against each.
 6. **Read `~/.claude/CLAUDE.md`** if it exists, specifically for an already-stated state-file
    convention: a `tasks.md` checkbox scheme, a `MEMORY.md` shape, a `plans/` format. If one is
    stated there, use it instead of the defaults in the Templates section below — a global
@@ -96,10 +104,45 @@ the proposal so the person is approving the real change and not a smaller one.
 When a file is retired, preserve item ordering if anything references its contents by number, and
 leave a short banner in each file whose links you retarget saying what moved and when.
 
-## Registering with the parent
+## Wiring into the chain
 
-If the parent folder has a `CLAUDE.md` with an index or routing table, add a line pointing at the new
-one. A nested `CLAUDE.md` that nothing links to is discoverable only by accident.
+A `CLAUDE.md` that nothing links to is discoverable only by accident. Use the map from survey step 5
+and wire the new file in both directions, then say what you wired.
+
+**Link up.** The new file's header names its nearest ancestor with a `CLAUDE.md`, as a relative path:
+`Inherits from [parent](../CLAUDE.md)`, or `../../CLAUDE.md` if the nearest one is two levels up.
+Name the actual nearest one, not the immediate parent folder, or the link points at a file that
+isn't there.
+
+**Link down.** The `## Subfolders` section lists every subfolder within three levels that has its own
+`CLAUDE.md`, each with a relative link and one line on what that folder owns. A subfolder with no
+`CLAUDE.md` of its own is not listed — it inherits this file and needs no entry.
+
+**Register upward.** If the nearest ancestor has an index or routing table, add a line to it pointing
+at the new file. If it has a `CLAUDE.md` but no index, say so rather than inventing a table in
+someone else's file, and offer to add one.
+
+**Become the connector when you land in the middle of an existing chain.** If the map shows a
+`CLAUDE.md` both above and below this folder, those two were previously linked to each other,
+skipping the level you are now adding. Inserting a file without re-pointing them leaves a chain that
+routes around the new file, which is the same as not having it. So:
+
+1. Point the new file up at the ancestor and down at the descendants, as above.
+2. **Re-point the descendants.** Each descendant whose `Inherits from` link targets the old ancestor
+   now targets the new file instead. This is an edit to someone else's file, so it goes in the
+   proposal with the exact paths, before anything is written.
+3. **Re-point the ancestor's index.** A row that pointed straight at a descendant now points at the
+   new file, with the descendant listed as a child of it. Do not delete the descendant's row without
+   saying so; a row vanishing from an index is how a folder becomes invisible.
+4. Leave a one-line dated note in each file you re-pointed, saying what moved and when, per the
+   deleting-and-replacing rule above.
+
+**Announce the result plainly**, as a before-and-after of the chain, not as prose. Name every file
+you edited and every link you changed. Someone reading the summary should be able to see the shape
+of the chain without opening anything.
+
+**When nothing is above or below**, say so. A standalone `CLAUDE.md` with no chain is a normal and
+fine outcome; it just needs stating, so nobody assumes a link was made that wasn't.
 
 ## Templates
 
@@ -108,8 +151,9 @@ Floors, not ceilings. Replace the bracketed parts and delete any section the fol
 ### CLAUDE.md
 
 ```markdown
-# CLAUDE.md — [folder name]
-# Inherits from [parent](../CLAUDE.md). Describes this folder only; does not restate parent rules.
+# CLAUDE.md (folder name)
+# Inherits from [nearest ancestor](../CLAUDE.md). Describes this folder only; does not restate
+# parent rules. Delete this line if no ancestor has a CLAUDE.md.
 Last updated: YYYY-MM-DD
 
 ## What this folder is
@@ -120,8 +164,11 @@ Last updated: YYYY-MM-DD
 have to infer by reading everything. Table if there is more than one kind of file.]
 
 ## Subfolders
-| Folder | What is in it |
+Only those with their own `CLAUDE.md`. A subfolder without one inherits this file and needs no row.
+
+| Folder | What it owns |
 |---|---|
+| [name/](name/CLAUDE.md) | [what that folder is the source of truth for] |
 
 ## Gotchas
 [Anything that has already gone wrong here, or that would if someone assumed the obvious thing.]

@@ -8,9 +8,12 @@ description: Close out a work session. Writes a dated wrap file recording what w
 That's a wrap. Claude forgets everything when a session ends, so this writes down what matters and
 the next one starts warm instead of from zero.
 
-Run the five steps in order. **Steps 2, 3 and 5 are conditional** — if the project has no task list,
-no plan file, or no memory convention, say so explicitly and move on. Saying "no task list here" is a
+Run the five steps in order. **Steps 2 and 3 are conditional** — if the project has no task list or
+no plan file, say so explicitly, offer to create one, and move on. Saying "no task list here" is a
 completed step. Skipping silently is not.
+
+**Steps 1, 4 and 5 always run.** Step 5 especially: verification is not conditional on anything, and
+a session with nothing to reconcile still has to prove that what it wrote is true.
 
 ---
 
@@ -47,7 +50,18 @@ parents — work here often closes an item tracked one level up. Format and chec
 a cleanup if the file is over roughly 400 lines, if closed items outnumber open ones, or if you find
 an item marked open that is verifiably done. Report the flag; do not do the cleanup unprompted.
 
-If no task list is relevant, say so, so it is clear the check ran.
+**If there is no task list anywhere, say so, then offer to fix it.** The check having run is not the
+end of it: this session produced next actions, and with nowhere to put them they live only in a wrap
+file nobody may open. Offer two options and let the user pick:
+
+- **Just what's needed here** — a minimal `tasks.md` in this folder, following `tasks-format.md`,
+  pre-filled with the open items this session actually surfaced.
+- **The full set** — point them at `/handrail:scaffold`, which surveys the folder first and creates
+  the whole state-file set with conventions derived from what is already there.
+
+Create nothing without a yes, and name the exact path before writing. If they decline, record "no
+task list, declined" rather than "no task list here", so the next session knows it was offered and
+turned down rather than never considered.
 
 ---
 
@@ -60,7 +74,15 @@ Maintain a header on each: `Approved:` (never overwrite or invent a date), `Stat
 (`Started` / `In progress` / `Done` / `Abandoned`, where `Done` means the whole plan, not one part
 of it), and `Last updated:`. Append one dated line per change under a `## Change Log` heading.
 
-If no plan was used, say so and skip.
+If no plan was used, say so and skip. If a plan was used but there is no `plans/` directory to keep
+it in, offer the same two options as Step 2: create `plans/` here and file this one plan in it, or
+run `/handrail:scaffold` for the whole set. Same rule — name the path, wait for a yes.
+
+**A memory file is the third case.** If the folder has no `MEMORY.md` or equivalent and this session
+established state worth carrying (where things stand, what is half-finished, what the next session
+needs to know before touching anything), offer to create one. Do not offer it for a session that
+produced nothing durable; an empty `MEMORY.md` is worse than none, because it reads as "nothing is
+happening here" when the truth is nobody filled it in.
 
 ---
 
@@ -101,8 +123,10 @@ Empty is a valid answer.]
 ## Notes
 
 **Files created or modified:** [full paths, one per line, labelled created or modified]
-**Tasks updated:** [each file touched and what changed, or "no task list here"]
-**Plans updated:** [each file touched and what changed, or "no plan used"]
+**Tasks updated:** [each file touched and what changed; or "no task list here"; or "no task list,
+created one at <path>"; or "no task list, declined"]
+**Plans updated:** [each file touched and what changed; or "no plan used"; or "no plans/ here,
+created one"; or "no plans/, declined"]
 **Verification:** [see Step 5]
 ```
 
