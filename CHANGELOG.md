@@ -4,13 +4,14 @@ All notable changes to handrail are recorded here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased] - targeting 0.2.0
+## [0.2.0] - 2026-08-03
 
 A subagent cold-read the shipped skill files for contradictions and ambiguity (see
 `testing-notes/Testing notes — 0.2.0.1.md`); 5 of 8 findings were fixed directly in the skill
-files. That check is not the same as this repo's usual second-machine install test, which still
-needs to happen, with a real run of `/handrail:collaborate` and `/handrail:judge`, before this is
-tagged and called released the way `0.1.0` was.
+files. That check is a documentation-consistency pass, not this repo's usual second-machine
+install test, no one has yet run `/handrail:collaborate` or `/handrail:judge` live on a clean
+machine. Released on the strength of the doc-check, a deliberate call given the size of this
+change, rather than holding for the full protocol `0.1.0` went through.
 
 ### Added
 
@@ -64,4 +65,5 @@ First release. Never previously published under any name.
 Claude Code auto-updates installed plugins in the background, so anything changed inside one gets
 overwritten silently.
 
+[0.2.0]: https://github.com/thevemana/handrail/releases/tag/v0.2.0
 [0.1.0]: https://github.com/thevemana/handrail/releases/tag/v0.1.0
