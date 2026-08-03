@@ -34,11 +34,14 @@ First release. Never previously published under any name.
 - **`save-plan.py`** hook, on `PostToolUse` / `ExitPlanMode`. Saves an approved plan to
   `plans/YYYY-MM-DD-<slug>.md` and stops the turn, so approving a plan no longer starts the build.
 - **`protect-paths.py`** hook, on `PreToolUse` / `Edit|Write|NotebookEdit`. Refuses writes to `.env`,
-  `*.pem`, `*.key`, `id_rsa*`, `secrets/`, `credentials*`, `node_modules/` and `.git/`. Allows
+  `*.pem`, `*.key`, `id_rsa*`, `secrets/`, `credentials`, `node_modules/` and `.git/`. Allows
   `.env.example` and `.env.template`.
-- **`block-ai-trailer.py`** hook, on `PreToolUse` / `Bash|PowerShell`. Refuses a `git commit`
-  carrying a `Co-Authored-By: Claude` trailer, including one hidden in a `-F`/`--file` message file.
-  Reading history for the trailer stays allowed.
-- **`test-hooks.py`**. 20 unit tests covering all three hooks, runnable before trusting them.
+- **`test-hooks.py`**. 21 unit tests covering both hooks and the opt-in gate, runnable before
+  trusting them.
+
+**Both hooks ship off.** Nothing fires until `~/.claude/handrail-hooks.json` turns it on, per hook.
+`/handrail:onboard` offers to write that file. The switch lives outside the plugin on purpose:
+Claude Code auto-updates installed plugins in the background, so anything changed inside one gets
+overwritten silently.
 
 [0.1.0]: https://github.com/thevemana/handrail/releases/tag/v0.1.0

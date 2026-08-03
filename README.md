@@ -27,15 +27,17 @@ Everything here is optional and everything here is editable. Once installed, the
 ## Install
 
 **Before you start:** you need Claude Code itself running, and nothing else, `thevemana/handrail` is
-a public GitHub repo, so no account or login is required. (The three hooks need Python 3; see
-[Hooks, if you want enforcement](#hooks-if-you-want-enforcement) below, skills work without it.)
-Nothing here calls out to any external service: the hooks are local scripts that only read stdin
+a public GitHub repo, so no account or login is required. (The two hooks need Python 3 and are off
+until you turn them on; see [Hooks, if you want enforcement](#hooks-if-you-want-enforcement) below.
+Skills need neither.) Nothing here calls out to any external service: the hooks are local scripts that only read stdin
 and check file paths, and the skills add no network behavior beyond what your Claude Code session
-already does. Reversible any time: `/plugin uninstall handrail@thevemana` removes it in one command;
-see [Turning everything off](#turning-everything-off).
+already does. Reversible any time, in one command in the terminal or one menu item in the desktop
+app; see [Turning everything off](#turning-everything-off).
 
-Type both of these **inside a running Claude Code session** (they're Claude Code's own `/` commands,
-not something you run in your regular terminal):
+Type both of these **inside a running Claude Code session**. These are Claude Code's own `/`
+commands, so they go in the prompt where you talk to Claude, not in a shell. If you are using the
+desktop app they are not available at all, so use
+[On the Claude Code desktop app](#on-the-claude-code-desktop-app) below instead.
 
 ```
 /plugin marketplace add thevemana/handrail
@@ -55,6 +57,27 @@ What to expect at each step:
 
 The install form is `<plugin>@<marketplace>`, not a bare plugin name. Here that is
 `handrail@thevemana`: the plugin, then where it came from.
+
+### On the Claude Code desktop app
+
+Use the **Code** tab. Plugins installed there do not carry over to the Cowork tab, which draws its
+configuration from your claude.ai account rather than from `~/.claude`.
+
+The `/plugin` commands above are not available in the desktop app. Install through the interface
+instead:
+
+1. Click **+** next to the prompt box and choose **Plugins**
+2. Choose **Add plugin** to open the plugin browser
+3. Click **+** again and choose to add a marketplace from a repository
+4. Paste `https://github.com/thevemana/handrail`
+5. Select **handrail** and install it
+
+The app reports the plugin as installed and ready. If typing `/handrail` in the prompt box does not
+offer the five skills, restart the app.
+
+To remove it later, use **Manage plugins** in the same **+** menu rather than the uninstall command
+below. The desktop app and the CLI share the same configuration, so installing on either one covers
+both on that machine.
 
 ---
 
@@ -119,8 +142,8 @@ section that pays for itself, because a recorded dead end stops you walking into
 one long document. **Read the contradictions section first.** That is the part you could not have
 got by reading the files yourself.
 
-Want to see the hooks refuse you? [docs/hooks.md](docs/hooks.md#try-them-yourself) has three more
-things to try.
+Want to see the hooks refuse you? Turn them on first, they ship off, then
+[docs/hooks.md](docs/hooks.md#try-them-yourself) has two more things to try.
 
 ---
 
@@ -195,15 +218,28 @@ navigable and complete, not short. Reads markdown, text, Word, PowerPoint, Excel
 Skills are things you ask for. Hooks are things that happen whether you ask or not, which is why
 they matter for the handful of rules you can't afford to have skipped.
 
-Three small Python scripts do this: saving an approved plan before it starts building, refusing
-writes to `.env` and other secrets, and keeping AI attribution out of commit messages.
+Two small Python scripts do this: saving an approved plan before it starts building, and refusing
+writes to `.env` and other secrets.
+
+**Both are off until you turn them on.** Installing handrail wires them up; it does not start them.
+Nothing intercepts anything until you say so, per hook, in `~/.claude/handrail-hooks.json`:
+
+```json
+{
+  "save-plan": true,
+  "protect-paths": true
+}
+```
+
+`/handrail:onboard` offers to write this for you. A plugin that starts blocking your file writes the
+moment you install it is not a good introduction to anything, so handrail asks first.
 
 They need Python 3 on your PATH (check with `python --version`). If you don't have it, four of the
-five skills still work exactly as described, you just don't get these three, the exception is
+five skills still work exactly as described and the hooks simply cannot run, the exception is
 `consolidate-folder`'s inventory helper (see
 [Requirements and troubleshooting](#requirements-and-troubleshooting)).
 
-Full reference, what each hook does, how to turn any of them off, and why hooks exist at all instead
+Full reference, what each hook does, how to turn either off, and why hooks exist at all instead
 of just more CLAUDE.md rules: [docs/hooks.md](docs/hooks.md).
 
 ---
@@ -214,7 +250,8 @@ of just more CLAUDE.md rules: [docs/hooks.md](docs/hooks.md).
 update.
 
 **The whole plugin.** `/plugin uninstall handrail@thevemana`. To also drop the marketplace entry,
-`/plugin marketplace remove thevemana`.
+`/plugin marketplace remove thevemana`. On the desktop app neither command exists; use **Manage
+plugins** in the **+** menu next to the prompt box instead.
 
 **Just the hooks, keeping the skills?** See [docs/hooks.md](docs/hooks.md#a-note-on-disabling).
 
@@ -225,12 +262,12 @@ update.
 **Skills work with nothing extra installed.** No Python, no account beyond Claude Code itself,
 nothing to configure.
 
-**Python 3 is only needed for the three hooks** (and `consolidate-folder`'s inventory script). Check
+**Python 3 is only needed for the two hooks** (and `consolidate-folder`'s inventory script). Check
 with `python --version`. If it errors, or you want to know exactly what each hook does and how to
 turn one off, see [docs/hooks.md](docs/hooks.md).
 
 **Skills not appearing after install.** Restart, or `/reload-plugins`. Typing `/handrail` should
-offer all five.
+offer all five. On the desktop app `/reload-plugins` is not available either, so restart the app.
 
 ---
 

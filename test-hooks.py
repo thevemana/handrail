@@ -5,16 +5,18 @@ Feeds each hook the same stdin payload Claude Code sends and checks the decision
 Passing here means the logic is right. It does not mean hooks.json is wired
 correctly, which only a live session proves.
 
-The co-author trailer is assembled at runtime rather than written literally, so
-this file does not itself trip a trailer-blocking hook.
+Both hooks are opt-in, so every behavioural case below runs against a temporary
+config file that turns them on. The opt-in gate itself is tested separately, at
+the end, because "the hook did nothing" is the correct answer there and the wrong
+answer everywhere else.
 """
 import json
 import os
 import subprocess
 import sys
+import tempfile
 
 HOOKS = os.path.join(os.path.dirname(os.path.abspath(__file__)), "hooks")
-TRAILER = "Co-Authored-By" + ": Claude <noreply@anthropic.com>"
 
 # (script, tool_input, should_deny, label)
 CASES = [
@@ -25,29 +27,38 @@ CASES = [
     ("protect-paths.py", {"file_path": "/proj/.env.example"}, False, "allow-listed .env.example"),
     ("protect-paths.py", {"file_path": "/proj/src/app.py"}, False, "ordinary source file"),
     ("protect-paths.py", {}, False, "no file_path in payload"),
+    ("protect-paths.py", {"notebook_path": "/proj/secrets/notes.ipynb"}, True,
+     "NotebookEdit uses notebook_path, not file_path"),
+    ("protect-paths.py", {"notebook_path": "/proj/analysis.ipynb"}, False,
+     "ordinary notebook (true negative for the notebook path)"),
 
-    ("block-ai-trailer.py", {"command": f'git commit -m "x\n\n{TRAILER}"'}, True,
-     "commit carrying the trailer"),
-    ("block-ai-trailer.py", {"command": f'git commit -am "x\n\n{TRAILER}"'}, True,
-     "commit -am carrying the trailer"),
-    ("block-ai-trailer.py", {"command": f'git -c user.name=x commit -m "x\n\n{TRAILER.lower()}"'},
-     True, "global flags before subcommand, lowercased trailer"),
-    ("block-ai-trailer.py", {"command": 'git commit -m "clean message"'}, False, "clean commit"),
-    ("block-ai-trailer.py", {"command": f'git log --format=%B | grep "{TRAILER}"'}, False,
-     "reading history for the trailer stays allowed"),
-    ("block-ai-trailer.py", {"command": "git log --grep=commit --format=%B"}, False,
-     "the word commit inside a flag value"),
-    ("block-ai-trailer.py", {"command": f'echo "{TRAILER}" > notes.txt'}, False,
-     "non-git command that merely mentions it"),
+    # Regression guards for the fnmatch over-block. `*` crosses `/` in fnmatch, so
+    # a single "**/credentials*" made every project directory whose name merely
+    # starts with the word entirely unwritable. The third case is the one that
+    # used to fail.
+    ("protect-paths.py", {"file_path": "/proj/credentials.json"}, True, "credentials.json"),
+    ("protect-paths.py", {"file_path": "/proj/credentials/db.yaml"}, True, "credentials/ dir"),
+    ("protect-paths.py", {"file_path": "/dev/credentials-service/src/main.py"}, False,
+     "credentials-service is an ordinary project, not a secret"),
 ]
 
 
-def run(script, tool_input, extra=None):
+def run(script, tool_input, extra=None, config=None):
     payload = {"tool_input": tool_input}
     if extra:
         payload.update(extra)
+    env = dict(os.environ)
+    env["HANDRAIL_HOOKS_CONFIG"] = config if config else os.devnull
     return subprocess.run([sys.executable, os.path.join(HOOKS, script)],
-                          input=json.dumps(payload), capture_output=True, text=True)
+                          input=json.dumps(payload), capture_output=True, text=True,
+                          env=env)
+
+
+def raw(script, stdin, config=None):
+    env = dict(os.environ)
+    env["HANDRAIL_HOOKS_CONFIG"] = config if config else os.devnull
+    return subprocess.run([sys.executable, os.path.join(HOOKS, script)],
+                          input=stdin, capture_output=True, text=True, env=env)
 
 
 def check(label, ok, failures):
@@ -56,44 +67,50 @@ def check(label, ok, failures):
         failures.append(label)
 
 
+def write_config(directory, **flags):
+    path = os.path.join(directory, "handrail-hooks.json")
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(flags, f)
+    return path
+
+
 def main():
     failures = []
 
-    for script, tool_input, should_deny, label in CASES:
-        out = run(script, tool_input)
-        check(f"{script:22} {label}", ('"deny"' in out.stdout) == should_deny, failures)
-
-    # A crashing hook must fail open, or a bug in it locks you out of your tools.
-    for script in ("protect-paths.py", "block-ai-trailer.py"):
-        out = subprocess.run([sys.executable, os.path.join(HOOKS, script)],
-                             input="not json at all", capture_output=True, text=True)
-        ok = out.returncode == 0 and '"deny"' not in out.stdout
-        check(f"{script:22} fails open on malformed stdin", ok, failures)
-
-    # save-plan.py: writes the plan, and always returns the hard stop.
-    import tempfile
     with tempfile.TemporaryDirectory() as tmp:
+        on = write_config(tmp, **{"protect-paths": True, "save-plan": True})
+
+        for script, tool_input, should_deny, label in CASES:
+            out = run(script, tool_input, config=on)
+            check(f"{script:22} {label}", ('"deny"' in out.stdout) == should_deny, failures)
+
+        # A crashing hook must fail open, or a bug in it locks you out of your tools.
+        out = raw("protect-paths.py", "not json at all", config=on)
+        check("protect-paths.py       fails open on malformed stdin",
+              out.returncode == 0 and '"deny"' not in out.stdout, failures)
+
+        # save-plan.py: writes the plan, and always returns the hard stop.
+        plans = os.path.join(tmp, "proj")
         plan = "# Plan: test the save hook\n\n## Goal\nProve it writes."
-        out = run("save-plan.py", {"plan": plan}, extra={"cwd": tmp})
+        out = run("save-plan.py", {"plan": plan}, extra={"cwd": plans}, config=on)
         try:
             control = json.loads(out.stdout)
         except (json.JSONDecodeError, ValueError):
             control = {}
-        written = os.listdir(os.path.join(tmp, "plans")) if os.path.isdir(os.path.join(tmp, "plans")) else []
+        written = os.listdir(os.path.join(plans, "plans")) if os.path.isdir(os.path.join(plans, "plans")) else []
         check("save-plan.py           writes a slugged file into plans/",
               any(f.endswith("-test-the-save-hook.md") for f in written), failures)
         check("save-plan.py           returns the hard stop (continue: false)",
               control.get("continue") is False, failures)
 
         # Re-approving the identical plan must not create a duplicate.
-        run("save-plan.py", {"plan": plan}, extra={"cwd": tmp})
-        again = os.listdir(os.path.join(tmp, "plans"))
+        run("save-plan.py", {"plan": plan}, extra={"cwd": plans}, config=on)
+        again = os.listdir(os.path.join(plans, "plans"))
         check("save-plan.py           skips an identical re-approval",
               len(again) == len(written), failures)
 
         # A malformed payload must still return the hard stop, never swallow it.
-        out = subprocess.run([sys.executable, os.path.join(HOOKS, "save-plan.py")],
-                             input="not json", capture_output=True, text=True)
+        out = raw("save-plan.py", "not json", config=on)
         try:
             control = json.loads(out.stdout)
         except (json.JSONDecodeError, ValueError):
@@ -101,7 +118,31 @@ def main():
         check("save-plan.py           still stops the turn on malformed stdin",
               control.get("continue") is False, failures)
 
-    total = len(CASES) + 2 + 4
+        behavioural = len(CASES) + 5
+
+        # --- The opt-in gate. Doing nothing is the pass condition here. ---
+        off = write_config(tmp, **{"protect-paths": False, "save-plan": False})
+        missing = os.path.join(tmp, "no-such-file.json")
+
+        gate = [
+            ("protect-paths.py", missing, "no config file at all"),
+            ("protect-paths.py", off, "config present, set to false"),
+        ]
+        for script, cfg, label in gate:
+            out = run(script, {"file_path": "/proj/.env"}, config=cfg)
+            check(f"{script:22} stays out of the way: {label}",
+                  out.returncode == 0 and '"deny"' not in out.stdout, failures)
+
+        quiet = os.path.join(tmp, "quiet")
+        for cfg, label in ((missing, "no config file at all"), (off, "config present, set to false")):
+            out = run("save-plan.py", {"plan": plan}, extra={"cwd": quiet}, config=cfg)
+            silent = out.returncode == 0 and "continue" not in out.stdout
+            unwritten = not os.path.isdir(os.path.join(quiet, "plans"))
+            check(f"save-plan.py           stays out of the way: {label}",
+                  silent and unwritten, failures)
+
+        total = behavioural + len(gate) + 2
+
     print(f"\n{total - len(failures)}/{total} passed")
     for f in failures:
         print(f"  failed: {f}")

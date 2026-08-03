@@ -13,7 +13,23 @@ invested in is the one mistake here that is hard to undo.
 
 ---
 
-## Step 1 — Check what already exists
+## Step 1 — Check the ground before asking anything
+
+### 1a. Is Python there?
+
+Run `python --version`, and `python3 --version` if the first fails. Record which worked.
+
+**Do this first, before the interview, not near the end.** handrail's hooks are Python scripts.
+Without an interpreter they do not run at all, and a hook command that cannot start is a
+*non-blocking* error in Claude Code, so the write it was supposed to guard goes through anyway.
+Nothing later in this interview may describe the hooks as live, active, or protecting anything
+unless this check passed. Say what you found, in one line, and carry it to Step 4.
+
+If neither command works, say so plainly now: the five skills work perfectly without Python, and
+the two hooks cannot run until it is installed. That is a real limit, not a footnote, and finding
+it out after a twenty-minute interview is worse than finding it out in the first ten seconds.
+
+### 1b. What already exists
 
 Read `~/.claude/CLAUDE.md`. Three outcomes:
 
@@ -37,14 +53,33 @@ correctly.
 Read `template.md` in this skill's folder before asking anything. It is the skeleton you are
 filling; the section numbers below match it.
 
-Ask in batches, not one question per message. Use structured multiple-choice questions where your
-environment supports them; otherwise ask plainly and take a short free-text answer. After each
-round, state what you now believe and let the person correct it before moving on — don't collect
-all five rounds silently and reveal a surprise draft at the end.
+**One question per message. Wait for the answer before asking the next.**
 
-**Round 1 — Identity (§1).** Who they are in a sentence or two, what it's for (one job, several
-clients, a mix of code and non-code work), and any standing assumption worth stating once
-(timezone, geography, units) rather than repeating every session.
+This rule exists because the opposite was tried and failed in a real session. Three questions were
+asked in one turn; the person answered two, because a terminal gives you one Enter and one reply;
+the third was quietly lost. The skill then *noticed* the missing answer and said so, after it had
+already moved to the next round, leaving someone aware of a hole with no way to fill it. Naming a
+gap you have made unfixable is worse than not noticing it.
+
+Batching is tempting because it looks efficient. It is only efficient when every question gets an
+answer, and in a single-reply interface they do not.
+
+**Close every round with a summary and a fork.** State what you now believe in two or three lines,
+then offer three things by name: continue, change an answer, or go back a round. Do not treat this
+as optional politeness and do not collect five rounds silently to reveal a surprise draft at the
+end. If a round produced nothing, say so and move on rather than skipping the checkpoint.
+
+**Blank versus options, so this is not decided per question by feel.** Offer named choices when the
+answer space is small and known, and when asking openly would make someone invent vocabulary they
+do not have. Leave it open when the answer is personal and unguessable. "How much do you want to
+see before I act" gets options. "Which folder must never be touched" gets a blank, because only
+they know. Use structured multiple-choice where your environment supports it; otherwise list the
+options plainly and let them answer with a number.
+
+**Round 1 — Identity (§1).** Three separate questions, asked one at a time. Who they are in a
+sentence or two. What this is for (one job, several clients, a mix of code and non-code work). Any
+standing assumption worth stating once rather than every session, such as timezone, geography or
+units. **Do not compress these into one message.** This round is where the failure above happened.
 
 **Round 2 — Guardrails (§3).** The one question that matters most: *is there a folder, a
 repository, or a class of action (pushing to production, touching a specific database, sending
@@ -101,8 +136,8 @@ Two things to flag explicitly while showing it, so nobody discovers them by surp
 
 - **This file is advisory.** Claude follows CLAUDE.md instructions most of the time, not every
   time. Anything from the guardrails round where a single miss would cause real damage belongs in
-  a hook, not a paragraph — say so, and point at this plugin's own `protect-paths.py` and
-  `block-ai-trailer.py` as worked examples if either guardrail resembles what those already do.
+  a hook, not a paragraph. Say so, and point at this plugin's own `protect-paths.py` as a worked
+  example if their guardrail resembles what it already does.
 - **This is a floor, not a finished file.** The right size is "everything here is a live rule,"
   not "everything I might ever want." It will grow as real sessions surface real needs — that's
   normal, and better than trying to anticipate them all now.
@@ -127,9 +162,37 @@ extends) are deliberately thin in a first file, because on day one there is usua
 to describe. They are the sections to come back to once real hooks or skills exist, and the file is
 theirs to edit directly when that day arrives.
 
-One exception worth naming while writing it: handrail's own three hooks are live from the moment the
-plugin is installed, so §2 has at least three honest rows available immediately. Offer to add them,
-naming what each one refuses.
+### Then offer the hooks, accurately
+
+handrail ships two hooks and **both are off until the person turns them on.** Installing the plugin
+wires them up; it does not start them. Do not describe them as live, active, running or protecting
+anything until the file below says so and Step 1a found an interpreter.
+
+Offer them one at a time, naming what each actually does:
+
+- **`save-plan`** writes an approved plan to `plans/` and then stops the turn, so approving a plan
+  never silently starts the work. It blocks nothing else.
+- **`protect-paths`** refuses writes to `.env` files, `*.pem`, `*.key`, `secrets/`, `credentials`
+  and `.git/`. This one intercepts every file edit, so say that out loud before they accept it.
+
+If they want either, write `~/.claude/handrail-hooks.json`:
+
+```json
+{
+  "save-plan": true,
+  "protect-paths": false
+}
+```
+
+Only the hooks set to exactly `true` run. A missing file means none of them do.
+
+**If Step 1a found no Python, do not write this file.** Say that the hooks cannot run yet, that
+installing Python is what changes it, and that this file is the one thing to create afterwards.
+Writing an enabling config for scripts that cannot execute produces the precise failure this whole
+step exists to avoid: someone believing they are protected when they are not.
+
+Then §2 (the enforcement map) has honest rows to fill: one per hook they actually turned on, and
+none for the ones they did not.
 
 ---
 

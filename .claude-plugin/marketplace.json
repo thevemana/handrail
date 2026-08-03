@@ -10,7 +10,7 @@
       "name": "handrail",
       "displayName": "Handrail",
       "source": "./",
-      "description": "Something to hold onto while you learn Claude Code: five skills that write and refine your global CLAUDE.md, capture new rules the moment they come up, and give a project a memory across sessions, and three hooks that enforce what a markdown file can only ask for."
+      "description": "Something to hold onto while you learn Claude Code: five skills that write and refine your global CLAUDE.md, capture new rules the moment they come up, and give a project a memory across sessions, and two opt-in hooks that enforce what a markdown file can only ask for."
     }
   ]
 }

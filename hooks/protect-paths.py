@@ -3,6 +3,10 @@
 
 Wired to matcher "Edit|Write|NotebookEdit". Edit PROTECTED below to suit.
 
+**Off until you turn it on.** Set "protect-paths": true in
+`~/.claude/handrail-hooks.json`. See _config.py for why the switch lives there and
+not in this plugin's own files.
+
 Patterns are matched against the normalised absolute path with forward slashes,
 so they work the same on Windows and macOS.
 """
@@ -10,6 +14,8 @@ import fnmatch
 import json
 import os
 import sys
+
+import _config
 
 # Add your own. Each entry is a glob matched against the full path.
 PROTECTED = [
@@ -19,7 +25,13 @@ PROTECTED = [
     "**/*.key",
     "**/id_rsa*",
     "**/secrets/**",
-    "**/credentials*",
+    # Three patterns, not one glob. fnmatch lets `*` cross `/`, so the obvious
+    # "**/credentials*" also matches every file under any directory whose name
+    # merely starts with the word, making C:/dev/credentials-service/src/main.py
+    # unwritable. Same shape as the secrets entry above, which never had the bug.
+    "**/credentials",
+    "**/credentials.*",
+    "**/credentials/**",
     "**/node_modules/**",
     "**/.git/**",
 ]
@@ -51,6 +63,9 @@ def deny(reason):
 
 
 def main():
+    if not _config.enabled("protect-paths"):
+        sys.exit(0)
+
     try:
         payload = json.load(sys.stdin)
     except (json.JSONDecodeError, ValueError):
@@ -70,8 +85,9 @@ def main():
     if matches(path, PROTECTED):
         deny(
             f"Writes to {raw} are blocked by the protect-paths hook. "
-            "If this is intentional, edit PROTECTED in hooks/protect-paths.py "
-            "or make the change by hand outside Claude Code."
+            "If this is intentional, make the change by hand outside Claude Code, "
+            "or set \"protect-paths\": false in ~/.claude/handrail-hooks.json to "
+            "turn the hook off entirely."
         )
     sys.exit(0)
 

@@ -95,8 +95,10 @@ you append. Use today's real date; never invent one or copy the date from anothe
 
 **C. One miss would cause real damage → not a rule at all, regardless of what Scope said.** Say so
 plainly: this belongs in a hook, which this skill does not write. If it resembles what
-`protect-paths.py` or `block-ai-trailer.py` already do (a path pattern to refuse, a commit-message
-pattern to refuse), point at editing those directly — they're built to be edited. If it's genuinely
+`protect-paths.py` already does (a path pattern to refuse), point at editing that list directly, it's
+built to be edited. Note that handrail's hooks are off by default, so also check they have turned it
+on in `~/.claude/handrail-hooks.json`; a rule routed to a dormant hook is worse than no rule, because
+they will think it is handled. If it's genuinely
 novel, say building a new hook is real, separate work with its own verification needs, and stop
 there rather than writing a paragraph that only asks nicely for something that needs to be
 guaranteed.

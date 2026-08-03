@@ -17,12 +17,17 @@ Two jobs:
 The second job is the one worth having. Without it, "yes, that plan looks right"
 and "go build it" are the same keystroke, which is only what you wanted some of
 the time. Delete the three `control` keys below if you would rather it just save.
+
+**Off until you turn it on.** Set "save-plan": true in `~/.claude/handrail-hooks.json`.
+See _config.py for why the switch lives there and not in this plugin's own files.
 """
 import datetime
 import json
 import os
 import re
 import sys
+
+import _config
 
 
 def derive_slug(plan):
@@ -76,6 +81,9 @@ def target_path(plans_dir, base, plan):
 
 
 def main():
+    if not _config.enabled("save-plan"):
+        sys.exit(0)
+
     control = {
         "continue": False,
         "stopReason": "Plan approved and saved to plans/. Execution is paused. "
