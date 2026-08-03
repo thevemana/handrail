@@ -4,6 +4,26 @@ All notable changes to handrail are recorded here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased] - targeting 0.2.0
+
+A subagent cold-read the shipped skill files for contradictions and ambiguity (see
+`testing-notes/Testing notes — 0.2.0.1.md`); 5 of 8 findings were fixed directly in the skill
+files. That check is not the same as this repo's usual second-machine install test, which still
+needs to happen, with a real run of `/handrail:collaborate` and `/handrail:judge`, before this is
+tagged and called released the way `0.1.0` was.
+
+### Added
+
+- **`/handrail:collaborate`**. Runs several independent readers at once, blind to each other, on a
+  draft still in progress or on a decision the user is stuck circling. Cold-read mode gives readers
+  zero context; with-info mode briefs them on purpose and audience first. Synthesis names where
+  readers agreed and where they genuinely split, and does not average a real split into one
+  answer. Suggests concrete fixes. Never grades.
+- **`/handrail:judge`**. Runs one evaluator by default, or a panel of them, to give a decisive
+  verdict, opinion, critique, concrete fixes, and a grade, on a near-finished artifact. Cold-read
+  mode wires the existing blind-cold-read rule to a tool. A panel shows each judge's score before
+  describing any spread, rather than opening with one averaged number.
+
 ## [0.1.0] - 2026-08-02
 
 First release. Never previously published under any name.

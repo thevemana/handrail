@@ -13,9 +13,10 @@ writes it down. handrail is that something.
 |---|---|---|
 | AI memory is built by hand, and goes stale the moment you close the window | A **CLAUDE.md** that says how you work, a **MEMORY.md** that survives between sessions, a `wrap` that records what happened and why | `onboard`, `scaffold`, `wrap` |
 | No receipts. You're trusting a synthesis, not seeing the work | Checks its own claims against disk before reporting done. Says exactly where two documents disagree instead of picking a winner | `wrap`, `consolidate-folder` |
-| A new vocabulary to learn every time the field moves | Five **skills** (commands you type as `/handrail:name`), small interviews instead of a blank template, distilled from practices tested across many people | `onboard`, the whole skill set |
+| A new vocabulary to learn every time the field moves | Seven **skills** (commands you type as `/handrail:name`), small interviews instead of a blank template, distilled from practices tested across many people | `onboard`, the whole skill set |
 | Claude's pace and tone don't match yours, and you can't make it adapt | Interviews for pace and tone once, and lets any new preference become a standing rule | `onboard`, `codify` |
 | Mid-conversation you say "always do it this way," and it's gone by next session | Catches the sentence, asks a few short questions, routes it to the right home on its own | `codify` |
+| One opinion on a draft or a decision isn't enough to trust, but composing several yourself takes as long as writing the thing | Independent takes, blind to each other, that don't get averaged into one smoothed-over answer: feedback while you're still shaping it, or a verdict when it's time to ship | `collaborate`, `judge` |
 
 You could do this by hand, keep CLAUDE.md updated yourself, some people do. handrail is for closing
 the gap between meaning to and actually doing it while a session is moving.
@@ -53,7 +54,7 @@ What to expect at each step:
 |---|---|
 | `marketplace add` | A confirmation naming the marketplace `thevemana` and the plugins it found (one: `handrail`) |
 | `install` | A confirmation that `handrail` is installed, and a prompt to restart or reload |
-| after the restart | Typing `/handrail` offers `onboard`, `codify`, `wrap`, `scaffold` and `consolidate-folder` |
+| after the restart | Typing `/handrail` offers `onboard`, `codify`, `wrap`, `scaffold`, `consolidate-folder`, `collaborate` and `judge` |
 
 The install form is `<plugin>@<marketplace>`, not a bare plugin name. Here that is
 `handrail@thevemana`: the plugin, then where it came from.
@@ -73,7 +74,7 @@ instead:
 5. Select **handrail** and install it
 
 The app reports the plugin as installed and ready. If typing `/handrail` in the prompt box does not
-offer the five skills, restart the app.
+offer the seven skills, restart the app.
 
 To remove it later, use **Manage plugins** in the same **+** menu rather than the uninstall command
 below. The desktop app and the CLI share the same configuration, so installing on either one covers
@@ -142,12 +143,33 @@ section that pays for itself, because a recorded dead end stops you walking into
 one long document. **Read the contradictions section first.** That is the part you could not have
 got by reading the files yourself.
 
+**6. Get more than one take on a draft.** Point it at something you are still shaping:
+
+```
+/handrail:collaborate ~/drafts/resume.md
+```
+
+*You should see:* it either infers cold-read or with-info from how you phrased the request and says
+which one it picked, or asks if that's unclear. Then several independent readers, blind to each
+other, followed by a synthesis naming where they agreed and where they genuinely split, without
+smoothing the split into one average.
+
+**7. Get a verdict before something ships.** Once a draft is close enough to send, ask for a check:
+
+```
+/handrail:judge ~/drafts/resume.md
+```
+
+*You should see:* one judge by default, opinion, critique, concrete fixes, and a grade. Ask for a
+panel of judges instead and each score shows on its own before any talk of a spread, never one
+averaged number hiding a real disagreement.
+
 Want to see the hooks refuse you? Turn them on first, they ship off, then
 [docs/hooks.md](docs/hooks.md#try-them-yourself) has two more things to try.
 
 ---
 
-## The five skills
+## The seven skills
 
 ### `/handrail:onboard`
 
@@ -211,6 +233,28 @@ picking a winner. That contradiction was already in your folder, and this is wha
 **This is not a summary.** Nothing is dropped, so the output is long. That is the trade: you get
 navigable and complete, not short. Reads markdown, text, Word, PowerPoint, Excel and PDF.
 
+### `/handrail:collaborate`
+
+**Reach for it when** you have a draft or a plan still in progress and want more than one reaction
+to it, or you are stuck circling the same decision without landing anywhere.
+
+Runs several independent readers at once, blind to each other, so one does not just echo another.
+Cold-read mode gives them zero context and lets them react to what is actually on the page;
+with-info mode briefs them on purpose and audience first. Either way, the synthesis names where
+readers agreed and where they genuinely split, and will not smooth a real split into one
+comfortable middle answer. It suggests concrete fixes. It never grades.
+
+### `/handrail:judge`
+
+**Reach for it when** you want to know if something is actually ready, not more feedback while you
+are still shaping it.
+
+Runs one evaluator by default, or a panel of them when you want more confidence than a single read
+gives. Cold-read mode is the blind check worth running before calling anything final: the judge
+gets no framing and has to work out what the artifact is for on its own. Every run ends the same
+way, an opinion, a critique, concrete fixes, and a grade, and a panel shows each judge's score
+before it says anything about the group, rather than opening with one flattened number.
+
 ---
 
 ## Hooks, if you want enforcement
@@ -267,7 +311,7 @@ with `python --version`. If it errors, or you want to know exactly what each hoo
 turn one off, see [docs/hooks.md](docs/hooks.md).
 
 **Skills not appearing after install.** Restart, or `/reload-plugins`. Typing `/handrail` should
-offer all five. On the desktop app `/reload-plugins` is not available either, so restart the app.
+offer all seven. On the desktop app `/reload-plugins` is not available either, so restart the app.
 
 ---
 
