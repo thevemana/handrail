@@ -25,7 +25,7 @@ Without an interpreter they do not run at all, and a hook command that cannot st
 Nothing later in this interview may describe the hooks as live, active, or protecting anything
 unless this check passed. Say what you found, in one line, and carry it to Step 4.
 
-If neither command works, say so plainly now: the five skills work perfectly without Python, and
+If neither command works, say so plainly now: the seven skills work perfectly without Python, and
 the two hooks cannot run until it is installed. That is a real limit, not a footnote, and finding
 it out after a twenty-minute interview is worse than finding it out in the first ten seconds.
 

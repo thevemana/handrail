@@ -43,7 +43,7 @@ nothing to object to, which is exactly what it does not look like from the insid
 If you turned a hook on and are not sure it is running, do not infer it from the absence of
 complaints. Run the demo in [Try them yourself](#try-them-yourself) below.
 
-**No Python? Four of the five skills still work exactly as described in the main README.** You just
+**No Python? Six of the seven skills still work exactly as described in the main README.** You just
 won't get the hooks. The one exception is `consolidate-folder`'s file-inventory helper script, which
 also needs Python; the skill still runs without it, just without that one step.
 
@@ -130,7 +130,7 @@ So the split is:
 - **A rule where being ignored once causes real damage** belongs in a hook. Committing a secret,
   pushing to main, deleting data, overwriting a file you needed.
 
-That is the same test used to decide what went in this plugin. The five skills describe how to do
+That is the same test used to decide what went in this plugin. The seven skills describe how to do
 something, the two hooks describe what must not happen.
 
 An earlier build shipped a third hook that refused commits carrying an AI co-author trailer. It was

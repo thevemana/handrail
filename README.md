@@ -278,8 +278,8 @@ Nothing intercepts anything until you say so, per hook, in `~/.claude/handrail-h
 `/handrail:onboard` offers to write this for you. A plugin that starts blocking your file writes the
 moment you install it is not a good introduction to anything, so handrail asks first.
 
-They need Python 3 on your PATH (check with `python --version`). If you don't have it, four of the
-five skills still work exactly as described and the hooks simply cannot run, the exception is
+They need Python 3 on your PATH (check with `python --version`). If you don't have it, six of the
+seven skills still work exactly as described and the hooks simply cannot run, the exception is
 `consolidate-folder`'s inventory helper (see
 [Requirements and troubleshooting](#requirements-and-troubleshooting)).
 
