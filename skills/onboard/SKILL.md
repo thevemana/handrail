@@ -48,7 +48,7 @@ correctly.
 
 ---
 
-## Step 2 — Interview, in five short rounds
+## Step 2 — Interview, in six short rounds
 
 Read `template.md` in this skill's folder before asking anything. It is the skeleton you are
 filling; the section numbers below match it.
@@ -66,7 +66,7 @@ answer, and in a single-reply interface they do not.
 
 **Close every round with a summary and a fork.** State what you now believe in two or three lines,
 then offer three things by name: continue, change an answer, or go back a round. Do not treat this
-as optional politeness and do not collect five rounds silently to reveal a surprise draft at the
+as optional politeness and do not collect six rounds silently to reveal a surprise draft at the
 end. If a round produced nothing, say so and move on rather than skipping the checkpoint.
 
 **Blank versus options, so this is not decided per question by feel.** Offer named choices when the
@@ -77,15 +77,26 @@ they know. Use structured multiple-choice where your environment supports it; ot
 options plainly and let them answer with a number.
 
 **Round 1 — Identity (§1).** Three separate questions, asked one at a time. Who they are in a
-sentence or two. What this is for (one job, several clients, a mix of code and non-code work). Any
-standing assumption worth stating once rather than every session, such as timezone, geography or
-units. **Do not compress these into one message.** This round is where the failure above happened.
+sentence or two. What this is for (one job, several clients, a mix of code and non-code work).
+Anything that is always true and worth stating once rather than every session, such as timezone,
+geography or units. **Do not compress these into one message.** This round is where the failure
+above happened.
 
-**Round 2 — Guardrails (§3).** The one question that matters most: *is there a folder, a
-repository, or a class of action (pushing to production, touching a specific database, sending
-anything externally) that must never happen without an explicit stop?* Most people have at least
-one and have never written it down. If they say "nothing comes to mind," say that's fine and move
-on — an empty guardrails section is honest, a padded one is noise.
+**Round 2 — Guardrails (§3). Two questions, asked one at a time.** The first is the one that
+matters most: *is there a folder, a repository, or a class of action (pushing to production,
+touching a specific database, sending anything externally) that must never happen without an
+explicit stop?* Most people have at least one and have never written it down. If they say "nothing
+comes to mind," say that's fine and move on — an empty guardrails section is honest, a padded one
+is noise.
+
+Then, as a separate message: *what kind of wrong answer would you not notice?* A number carried
+forward from a stale file, a check reported as run that wasn't, a folder half-read and answered
+from anyway. The first question only surfaces damage someone can already picture; this one surfaces
+the failures that look identical to success, and those are the ones that need a hook rather than a
+paragraph — which is exactly what §2's "would I notice if it got skipped?" column is for, so
+whatever comes back here gives that table its first honest rows. Nobody volunteers this
+unprompted, which is the whole reason it is asked. "I don't know yet" is a fine answer: note it as
+something to revisit rather than inventing one for them.
 
 **Round 3 — Pace (§5).** How much they want to see before Claude acts. Give them the three
 common shapes rather than an open question: *(a) plan everything non-trivial and wait for a
@@ -103,6 +114,15 @@ task list, or decision log for their own work, and if so, where. If they don't y
 template's suggestions (`MEMORY.md`, `tasks.md`, `plans/`) are optional and can be added later via
 `/handrail:scaffold` inside a specific project — the global file doesn't have to commit to a
 convention nobody's using yet.
+
+**Round 6 — When things don't match (§4).** Don't ask this one cold; nobody has a considered
+position on it before they have been burned by it. Show them the answer the template already
+carries — *show both, say where each came from, say which one you'd bet on, and don't pick a winner
+quietly* — and ask whether that's what they want, or whether they'd rather Claude picked the one it
+judged more likely and told them afterwards. Most people keep the default once they see it. The
+point of showing it is that they have now seen it, and can change it later on purpose instead of
+discovering it by accident. **One exchange, not a round of open-ended thinking** — this round is
+short because it is a confirmation, not a question.
 
 **Skip what doesn't apply.** If a round produces nothing usable ("I don't really have guardrails
 yet," "no strong pace preference"), leave that section out of the draft rather than filling it
@@ -132,7 +152,7 @@ didn't get a real answer along with its section if the whole section is empty. S
 before writing it anywhere. This is the one artifact in the whole interaction the person should
 read start to finish, since it's the thing that shapes every future session.
 
-Two things to flag explicitly while showing it, so nobody discovers them by surprise later:
+Three things to flag explicitly while showing it, so nobody discovers them by surprise later:
 
 - **This file is advisory.** Claude follows CLAUDE.md instructions most of the time, not every
   time. Anything from the guardrails round where a single miss would cause real damage belongs in
@@ -141,6 +161,12 @@ Two things to flag explicitly while showing it, so nobody discovers them by surp
 - **This is a floor, not a finished file.** The right size is "everything here is a live rule,"
   not "everything I might ever want." It will grow as real sessions surface real needs — that's
   normal, and better than trying to anticipate them all now.
+- **There is no way to rate how sure Claude is in here, and that's deliberate.** Both
+  `/handrail:scaffold` and `/handrail:wrap` hand a project a small set of fixed words for that —
+  one set for how well-supported a claim is, one for whether it is still true. Neither belongs in a
+  first global file. On day one there is nothing to rate them against, and a vocabulary someone has
+  to learn before it repays anything is precisely what makes people abandon setup. They arrive with
+  the project that needs them, which is the right time to meet them.
 
 ---
 
@@ -198,7 +224,7 @@ and none for the ones they did not.
 
 ## Notes for customising this
 
-The five rounds above are deliberately the high-leverage ones, not an exhaustive tour of every
+The six rounds above are deliberately the high-leverage ones, not an exhaustive tour of every
 template section. If a particular round consistently produces nothing useful for the people you
 run this on, or a section the template treats as optional turns out to matter more than expected,
 edit this skill rather than working around it in conversation — the same rule `/handrail:wrap`
