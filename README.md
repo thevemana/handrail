@@ -12,7 +12,7 @@ writes it down. handrail is that something.
 | What gets in the way | What handrail does about it | Where |
 |---|---|---|
 | AI memory is built by hand, and goes stale the moment you close the window | A **CLAUDE.md** that says how you work, a **MEMORY.md** that survives between sessions, a `wrap` that records what happened and why | `onboard`, `scaffold`, `wrap` |
-| No receipts. You're trusting a synthesis, not seeing the work | Checks its own claims against disk before reporting done. Says exactly where two documents disagree instead of picking a winner | `wrap`, `consolidate-folder` |
+| No receipts. You're trusting a synthesis, not seeing the work | Checks its own claims against disk before reporting done. Says exactly where two documents disagree instead of picking a winner | `scaffold`, `wrap`, `consolidate-folder` |
 | A new vocabulary to learn every time the field moves | Seven **skills** (commands you type as `/handrail:name`), small interviews instead of a blank template, distilled from practices tested across many people | `onboard`, the whole skill set |
 | Claude's pace and tone don't match yours, and you can't make it adapt | Interviews for pace and tone once, and lets any new preference become a standing rule | `onboard`, `codify` |
 | Mid-conversation you say "always do it this way," and it's gone by next session | Catches the sentence, asks a few short questions, routes it to the right home on its own | `codify` |
@@ -84,7 +84,7 @@ both on that machine.
 
 ## Try it
 
-Five minutes, five things to type. Each one says what you should see.
+Five minutes, seven things to type. Each one says what you should see.
 
 **1. Write your global CLAUDE.md.** If you don't have one yet, or only have a thin first attempt:
 
@@ -177,12 +177,12 @@ Want to see the hooks refuse you? Turn them on first, they ship off, then
 **Reach for it when** you install Claude Code and have no global `~/.claude/CLAUDE.md` yet, or
 only a rough first attempt.
 
-Interviews you in five short rounds instead of handing you a blank template: who you are and what
+Interviews you in six short rounds instead of handing you a blank template: who you are and what
 you're using it for, what should never happen without a stop, how much you want to see before
-Claude acts, how you want it to talk to you, and whether you already keep any kind of running
-notes. Skips any round that produces nothing usable rather than padding the file with a generic
-placeholder, and shows the full draft before writing it. Refuses to overwrite a file that already
-looks lived-in.
+Claude acts, how you want it to talk to you, whether you already keep any kind of running notes,
+and what you want Claude to do when two things it is reading disagree. Skips any round that
+produces nothing usable rather than padding the file with a generic placeholder, and shows the full
+draft before writing it. Refuses to overwrite a file that already looks lived-in.
 
 ### `/handrail:codify`
 
@@ -205,6 +205,13 @@ specific next action. Then it reconciles your task list, closing items on the li
 rather than describing them as finished in a paragraph, updates any plan file the work advanced,
 checks any memory file it touched for drift and flags what's stale or wrong rather than rewriting it
 outright, and verifies its own claims against disk before reporting.
+
+**Before writing a new one, it reads the last few wraps.** If the same next action has carried
+across three wraps in a row, it says so under its own heading, names those files, and quotes the
+line that keeps coming back, then stops there without telling you what it means. Three, not two:
+twice is an ordinary week. A record written one session at a time cannot show you something that
+only appears across sessions, however honest each entry is, and a project moving normally never
+grows that heading.
 
 **You do not need any of those files first.** If there is no task list, no `plans/`, or no
 `MEMORY.md`, it says so rather than skipping quietly, and offers to create one, or points you at
@@ -229,6 +236,12 @@ conventions come from what you are already doing rather than from a template. **
 until you say yes.** And if it wants to retire something you already have, an `ideas.md` that is
 really a task list, it searches the folder for anything linking to that file and tells you what
 would break, before it asks.
+
+**If the folder disagrees with itself, the survey says so and leaves it that way.** Two task lists
+with different open items, a README describing a layout you no longer have, a status line a later
+note contradicts. You get both claims, both file paths, and no verdict. Conventions derived from a
+folder that contradicts itself, without anyone saying that it does, are how one of the two versions
+quietly becomes the official one.
 
 ### `/handrail:consolidate-folder`
 
