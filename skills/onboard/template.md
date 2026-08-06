@@ -5,31 +5,38 @@ Last updated: YYYY-MM-DD
 
 ---
 
-## 1. Identity and standing context
+## 1. Identity and always-on context
 
 [Who you are in one or two sentences, enough that Claude knows what "good" looks like for you.]
 
 [The entities, teams, or domains your work splits across.]
 
-**Standing assumptions.** These apply unless a project says otherwise:
+**Things that are always true.** These apply unless a project says otherwise:
 - [Geography / timezone / units]
 - [Anything else you'd otherwise repeat every session]
 
 ---
 
-## 2. Enforcement map
+## 2. What's actually enforced
 
 CLAUDE.md instructions are followed roughly 70% of the time. That is fine for preferences and not
 fine for safety. This table records which of my rules are actually enforced and which are advisory.
 
-| Rule | Tier | Mechanism | Verified |
-|---|---|---|---|
-| [rule] | Enforced | [hook file / settings.json field] | YYYY-MM-DD |
-| [rule] | Instruction | this file, §N | n/a |
+| Rule | Would I notice if it got skipped? | Tier | Mechanism | Verified |
+|---|---|---|---|---|
+| [rule] | [yes / no] | Enforced | [hook file / settings.json field] | YYYY-MM-DD |
+| [rule] | [yes / no] | Instruction | this file, §N | n/a |
 
-**Triage rule for anything new:**
-- Can this afford occasional non-compliance? → write it in this file.
-- Would one violation cause real damage? → build it as a hook or a settings field, then add a row here.
+**Deciding where a new rule goes:**
+- **Would I notice, within a session or two, if this got skipped?** If yes, write it in this file. A
+  miss I can see is a miss I can correct, and a written rule that gets followed most of the time is
+  enough for that.
+- **Would it get skipped without leaving a trace?** A check that never ran, a gap that never got
+  reported, a file that was never opened. If yes, build it as a hook or a settings field, then add a
+  row here. An instruction cannot cover a failure that looks identical to success.
+
+Ask that before asking how bad the damage would be. A small mistake that never surfaces costs more
+over a year than a big one that announces itself the first time.
 
 When a task needs a hard stop that doesn't exist yet, say so rather than promising to remember.
 
@@ -121,7 +128,7 @@ The set of files that carry state between sessions, and which one owns what.
 | [`plans/`] | [Approved plan-mode output] | [One file per plan] |
 | [add your own] | | |
 
-**Cascade rule.** [How your files nest. Does a parent aggregate its children, or point at them?
+**How these files nest.** [Does a parent aggregate its children, or point at them?
 Pick one and state it. Pointing scales; aggregating drifts.]
 
 **One owner per fact.** When a fact could drift (a rule, a timing, a status) one file owns it and

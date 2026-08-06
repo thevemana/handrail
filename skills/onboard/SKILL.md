@@ -110,7 +110,7 @@ with a generic placeholder. The template's own instruction is explicit about thi
 can't fill with something specific is worse than no section, because it dilutes the ones that are
 real.
 
-**§2 (the enforcement map) and §8 (skills/subagents/hooks) are not interview questions.** They
+**§2 (what's actually enforced) and §8 (skills/subagents/hooks) are not interview questions.** They
 start empty and fill in over time, as real rules get real enforcement or you install real skills.
 Explain this once during the interview rather than asking about mechanisms that don't exist yet on
 a fresh machine.
@@ -157,7 +157,7 @@ Tell the person where the file landed, and that the next real signal is watching
 actually follows the guardrails round in a real session — that's the test a template sitting on
 disk can't run for itself.
 
-**Then say this explicitly, don't leave it implied:** §2 (the enforcement map) and §8 (how the system
+**Then say this explicitly, don't leave it implied:** §2 (what's actually enforced) and §8 (how the system
 extends) are deliberately thin in a first file, because on day one there is usually nothing installed
 to describe. They are the sections to come back to once real hooks or skills exist, and the file is
 theirs to edit directly when that day arrives.
@@ -191,8 +191,8 @@ installing Python is what changes it, and that this file is the one thing to cre
 Writing an enabling config for scripts that cannot execute produces the precise failure this whole
 step exists to avoid: someone believing they are protected when they are not.
 
-Then §2 (the enforcement map) has honest rows to fill: one per hook they actually turned on, and
-none for the ones they did not.
+Then §2 (what's actually enforced) has honest rows to fill: one per hook they actually turned on,
+and none for the ones they did not.
 
 ---
 
