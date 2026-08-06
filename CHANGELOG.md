@@ -4,6 +4,130 @@ All notable changes to handrail are recorded here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2026-08-06
+
+Three skills already handled *continuity* well — carrying what happened into the next session. None
+of them handled *reconciliation*: what to do when two sources say different things, or when a check
+quietly didn't run. Retrieval failing is visible; reconciliation failing is not, which is why it was
+the half that had gone unwritten. This release closes that gap in the three skills that write state,
+adds no new skills, and deliberately invents no new vocabulary to do it.
+
+**Verification at the time of writing:** the hook unit tests pass and the plugin manifest validates.
+Neither says anything about how a skill behaves in a real session. The second-machine install test
+for this build has not been run. If this ships before it is, that is the same explicit call recorded
+above for 0.2.0 and 0.3.0 — stated here rather than implied.
+
+**One thing this release could not fix.** Four of the changes below (say what you didn't check,
+check the copy that will actually be read, the survey's unread-limits line, and putting unverified
+claims in the wrap file) all guard failures that leave no trace — which by the new triage rule in
+`/handrail:onboard`'s own template means they *should* be hooks, not written instructions. They
+can't be. A `PreToolUse` hook intercepts a file operation; none of these is a file operation. They
+are about how a conclusion gets reached, which is exactly the layer a hook cannot see. Naming the
+gap here rather than leaving it as an unmarked hole in the argument.
+
+### Changed
+
+- **`/handrail:onboard`** — the template gained the reconciliation rules it had no words for, and
+  the interview gained the round that produces them:
+  - **A "when things don't match" rule in §4**, five lines and no labels: show both sides, say where
+    each came from, say which one you'd bet on, then stop and let the person decide. Never settle a
+    conflict silently — a conflict resolved without being mentioned is the one nobody gets the chance
+    to catch. Conflict preservation is the centre of the argument this plugin makes and it was
+    absent from the plugin entirely.
+  - **"Say what you didn't check" (§4).** Every answer that came from searching, reading or
+    verifying now ends with one line on what it did not cover. A search that quietly skipped half of
+    what it should have read returns few results rather than an error, so an incomplete answer looks
+    exactly like a clean one.
+  - **"Check the copy I'm actually going to use, not the one you have open" (§4).** A claim can be
+    true in the file you read and false in the copy someone else opens — a published version behind
+    the working one, a cached install, a different branch. This is the error that survives review,
+    because the claim really was verified, against the wrong copy.
+  - **"If I couldn't defend it with this window closed, you made the decision, not me" (§5).**
+    Anything handed over for approval comes with the reasoning in plain words and the one or two
+    things it turns on. Being faster without being more right is not worth having.
+  - **§2 is now sorted on whether a failure would be noticed, not on how bad it would be.** The
+    table gained a "would I notice if it got skipped?" column and the triage rule below it was
+    rewritten to sort on that answer first. A rule whose failure is visible can live in a markdown
+    file, because a visible miss gets corrected; a rule that can be skipped without leaving a trace
+    needs a hook, whatever the damage would have been. Severity is the second question now, not the
+    first.
+  - **A sixth interview round, on disagreement.** It shows the answer the template already carries
+    and asks whether to keep it, rather than asking cold — one extra exchange, not a round of
+    open-ended thinking. Long questionnaires fail quietly, so a default-and-confirm was the only
+    shape that could carry this without lengthening the interview.
+  - **Round 2 gained a second question:** *what kind of wrong answer would you not notice?* The
+    existing guardrails question only surfaces damage someone can already picture. This one surfaces
+    the failures that look identical to success, and it is what gives §2's new column its first
+    honest rows. Nobody volunteers these unprompted.
+  - **Step 3 now says the file ships with no confidence scale, and why.** The words arrive with the
+    project that needs them, not on day one when there is nothing to rate. Stops someone importing a
+    vocabulary they have nothing to use it on, and makes the absence read as a decision.
+  - **Plainer words in the file people keep.** §1 "Identity and standing context" → "Identity and
+    always-on context"; "Standing assumptions" → "Things that are always true"; §2 "Enforcement map"
+    → "What's actually enforced"; "Triage rule for anything new" → "Deciding where a new rule goes";
+    §6 "Cascade rule" → "How these files nest". Skill files keep their precise vocabulary — those
+    are read by Claude, once, and compression is a virtue there. The template is read repeatedly by
+    a person who may be on their first day. The test is not whether a word is difficult, it is who
+    reads the line.
+- **`/handrail:scaffold`** — the survey already read every file's headers to derive conventions and
+  never asked whether they agreed with each other. It does now:
+  - **A new survey step: report where the folder disagrees with itself, and do not resolve it.**
+    Two task lists with different open items, a README describing a layout that no longer exists, a
+    status line contradicted by a dated note elsewhere. Each is reported as a pair — both claims,
+    both paths, both dates — and left open. Deriving a convention from a folder that contradicts
+    itself, without saying that it does, is how one of the two versions becomes permanent without
+    anyone choosing it. The headers were already being read, so this costs almost nothing.
+  - **The survey now states its own limits.** It reads the first 5 to 10 lines of each file and goes
+    one level into subfolders; that is now said out loud in the report, because a survey's limits are
+    invisible in its own output and the confident-looking version is the one that gets acted on.
+  - **The `CLAUDE.md` template gained "Where the real answer lives" and "Things that don't match".**
+    The first names, per subject, which file settles it and what that rests on — turning "one fact,
+    one owner" from a rule into something operable. The second holds contradictions with both sides
+    intact; resolving one means deleting the row and saying so, not editing one side into agreement.
+  - **Four plain words for how well supported a claim is:** Confirmed, One source only, Sources
+    disagree, Not found. Project tier only. Each label describes the evidence, so none of them needs
+    looking up, and the column is left out entirely until some subject genuinely has two sources — a
+    fresh scaffold rendering "one source only" four rows down just teaches people to stop reading
+    the column.
+  - **The `MEMORY.md` template's decision rows carry what they were based on**, with "judgment call,
+    nothing checked" as a perfectly good value, and the template gained a "Things that don't match
+    yet" section. A decision written into memory with reasoning but no source reads as settled fact
+    to the next session, which has no way to tell the checked ones from the ones that merely sounded
+    right at the time.
+  - **The missing `decisions.md` template is written.** It was named in the git-repo file set and had
+    no template, so every scaffolded repo invented its own shape. It carries a `Based on:` field and
+    a note to write the entry when the call is made rather than at release, since reconstructed
+    reasoning is how a guess gets recorded as an analysis.
+  - **Writing rule 4 extended:** `live / built / designed / assumed` gained `unconfirmed`. `assumed`
+    means nobody checked; `unconfirmed` means someone tried and could not. Extending a vocabulary
+    that was already plain, rather than replacing it.
+  - **Verify-before-done gained the wrong-copy case**, matching the new template rule: check the copy
+    that will actually be used, not the one you have open.
+- **`/handrail:wrap`** — the largest single change in this release is that a wrap now reads the ones
+  before it:
+  - **A new `## Same as last time?` section, which appears only when it fires.** Before writing,
+    `wrap` reads the last two or three wraps in the folder. If the same next action or open thread
+    has carried across three consecutive wraps, it says so, names the files and quotes the recurring
+    line — and stops there, without diagnosing or fixing it. Three is the threshold, not two: twice
+    is an ordinary week. This exists because of a documented case where four to six rebuilds happened
+    over twelve days and every session ended with a working artifact and a wrap that said done, which
+    is precisely why it took twelve days to notice. A per-session log that never looks backwards
+    cannot catch a per-project pattern, however honest each entry is. A healthy project never grows
+    the heading.
+  - **`Decisions Made` gained a "Based on" column** and **`Durable Facts` entries now say where each
+    came from.** Durable Facts is the section most likely to be read as established fact months
+    later and it carried no evidence at all — the highest-risk manufactured-confidence surface in the
+    plugin's own output.
+  - **"Confirmed" now has to say how it was checked.** Step 4 required evidence for Stale, Wrong and
+    Unverifiable and none for Confirmed, which is backwards: Confirmed is the one verdict that tells
+    the next reader to stop checking.
+  - **What couldn't be verified goes in the file, not only in chat.** The chat disappears when the
+    session ends and the file is what the next session opens, so a wrap carrying no caveats reads as
+    one where everything was checked.
+  - **When the three-file memory cap stops the check, the files it didn't reach are named** — the
+    same move as the existing "no task list, declined". A wrap that silently checked three of six
+    memory files reads exactly like one that checked all six.
+
 ## [0.3.0] - 2026-08-05
 
 This release rests on two doc-consistency cold-reads — one for `/handrail:scaffold`'s rework, one
@@ -194,6 +318,7 @@ First release. Never previously published under any name.
 Claude Code auto-updates installed plugins in the background, so anything changed inside one gets
 overwritten silently.
 
+[0.4.0]: https://github.com/thevemana/handrail/releases/tag/v0.4.0
 [0.3.0]: https://github.com/thevemana/handrail/releases/tag/v0.3.0
 [0.2.0]: https://github.com/thevemana/handrail/releases/tag/v0.2.0
 [0.1.0]: https://github.com/thevemana/handrail/releases/tag/v0.1.0

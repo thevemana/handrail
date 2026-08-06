@@ -1,7 +1,7 @@
 {
   "name": "handrail",
   "displayName": "Handrail: Memory and Guardrails for Claude Code",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Something to hold onto while you learn Claude Code. Seven skills write and refine your global CLAUDE.md, capture new rules the moment they come up, give a project a memory that survives between sessions, and get independent takes on a draft or a verdict before it ships, and two opt-in hooks enforce the rules a markdown file can only ask for.",
   "author": {
     "name": "Vemana Madasu",
