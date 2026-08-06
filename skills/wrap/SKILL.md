@@ -8,11 +8,11 @@ description: Close out a work session. Writes a dated wrap file recording what w
 That's a wrap. Claude forgets everything when a session ends, so this writes down what matters and
 the next one starts warm instead of from zero.
 
-Run the five steps in order. **Steps 2 and 3 are conditional** — if the project has no task list or
-no plan file, say so explicitly, offer to create one, and move on. Saying "no task list here" is a
-completed step. Skipping silently is not.
+Run the six steps in order. **Steps 2, 3 and 4 are conditional** — if the project has no task list,
+no plan file, or nothing worth carrying in memory, say so explicitly, offer to create it, and move
+on. Saying "no task list here" is a completed step. Skipping silently is not.
 
-**Steps 1, 4 and 5 always run.** Step 5 especially: verification is not conditional on anything, and
+**Steps 1, 5 and 6 always run.** Step 6 especially: verification is not conditional on anything, and
 a session with nothing to reconcile still has to prove that what it wrote is true.
 
 ---
@@ -28,8 +28,18 @@ If the session ran from a repo root but the work was all in one subproject, the 
 the subproject. Work spanning several areas goes where the main deliverable lives, with the others
 named in the file.
 
+When it isn't obvious which folder that is, use one test: **which artifact does this task change?**
+A file that lives in one location belongs there. A decision, a plan, or how a conversation went
+belongs wherever that's tracked, even if the session ran somewhere else. If the work genuinely
+touched more than one location roughly equally, fall back to the rule above: it goes where the main
+deliverable lives, and the others get a one-line pointer — never a second copy of the same content.
+
 Put it in a `_wraps/` subfolder. Create it on the first wrap in a folder. If loose wrap files are
 already sitting at that folder's root, move them in during the same edit and say so.
+
+**Check for a `CLAUDE.md`.** If the folder has none, say so and offer `/handrail:scaffold` — same
+rule as everywhere else in this skill: name the exact path, wait for a yes, create nothing without
+one. Don't build scaffolding logic here; route to the skill that already does it properly.
 
 ---
 
@@ -49,6 +59,11 @@ parents — work here often closes an item tracked one level up. Format and chec
 **Health check.** Report open, closed, and total line counts for each file touched. Flag it as worth
 a cleanup if the file is over roughly 400 lines, if closed items outnumber open ones, or if you find
 an item marked open that is verifiably done. Report the flag; do not do the cleanup unprompted.
+
+**Version history.** If the file you're writing to is untracked or gitignored, say so in the wrap
+file. A file can be correctly excluded from git for a shipping reason and still silently lose every
+bit of history the moment that happens — better to name that tradeoff now than have someone discover
+it by accident once the narrative it held is the only copy that ever existed.
 
 **If there is no task list anywhere, say so, then offer to fix it.** The check having run is not the
 end of it: this session produced next actions, and with nowhere to put them they live only in a wrap
@@ -78,15 +93,50 @@ If no plan was used, say so and skip. If a plan was used but there is no `plans/
 it in, offer the same two options as Step 2: create `plans/` here and file this one plan in it, or
 run `/handrail:scaffold` for the whole set. Same rule — name the path, wait for a yes.
 
-**A memory file is the third case.** If the folder has no `MEMORY.md` or equivalent and this session
-established state worth carrying (where things stand, what is half-finished, what the next session
-needs to know before touching anything), offer to create one. Do not offer it for a session that
-produced nothing durable; an empty `MEMORY.md` is worse than none, because it reads as "nothing is
-happening here" when the truth is nobody filled it in.
+**Version history.** Same check as Step 2 — if the plan file itself lives outside git's view (or the
+project has no version control at all), say so, for the same reason: a plan's change log is the only
+record of what was approved and when, and that's worth knowing is unversioned.
 
 ---
 
-## Step 4 — Write the file
+## Step 4 — Memory: write, then check
+
+**Write.** If the folder has an existing `MEMORY.md` or equivalent, update it with this session's
+new state rather than leaving it frozen — same rule as Steps 2 and 3 for tasks and plans. If the
+folder has none and this session established state worth carrying (where things stand, what's
+half-finished, what the next session needs to know before touching anything), offer to create one.
+Do not offer it for a session that produced nothing durable; an empty `MEMORY.md` is worse than
+none, because it reads as "nothing is happening here" when the truth is nobody filled it in. If
+there is no memory file anywhere, offer the same two options as Steps 2 and 3: a minimal file here,
+or `/handrail:scaffold` for the whole set. Name the path, wait for a yes.
+
+**Version history.** Same check as Steps 2 and 3 — if the memory file lives outside git's view, say
+so in the wrap file.
+
+**Check.** Before closing, look at every memory file this session actually read from, or wrote to,
+and classify each one: **Confirmed** (still true), **Stale** (was true, now dated), **Wrong**
+(contradicted by something this session found), or **Unverifiable** (no way to check from here). A
+file created fresh in the Write step above has no prior content to check against — skip it here.
+Lead with "was anything wrong this session," not "was anything used." Before concluding "no memory
+file applies," confirm that by checking whether one exists, not by the absence of a reason to open
+it. Put every non-Confirmed result in the wrap file with the evidence and stop there — the person
+adjudicates. If the person confirms a correction, that edit happens now, in this same step, under
+the guardrails below — never folded silently into the Write sub-step above.
+
+Guardrails on any memory file touched — read for Check or written in Write — this session:
+
+- **Cap it at three.** A fourth means stop touching memory files and move on to Step 5 with what's
+  covered so far. The cap limits memory work, not the rest of the wrap — Steps 5 and 6 still run.
+- **Diff before writing** to any existing memory file. Show the before and after; never silently
+  overwrite one.
+- **Never delete a memory line.** Supersede it with a new, dated line instead — a wrong memory dated
+  today is itself useful evidence of when the drift actually happened.
+
+If no memory file applies at all this session, say so and move on.
+
+---
+
+## Step 5 — Write the file
 
 Use this structure.
 
@@ -123,11 +173,14 @@ Empty is a valid answer.]
 ## Notes
 
 **Files created or modified:** [full paths, one per line, labelled created or modified]
-**Tasks updated:** [each file touched and what changed; or "no task list here"; or "no task list,
-created one at <path>"; or "no task list, declined"]
+**Tasks updated:** [each file touched and what changed; or "no task list, created one at <path>"; or
+"no task list, declined"]
 **Plans updated:** [each file touched and what changed; or "no plan used"; or "no plans/ here,
 created one"; or "no plans/, declined"]
-**Verification:** [see Step 5]
+**Memory updated:** [what was written, and where; or "no memory file applies"]
+**Memory accuracy:** [any non-Confirmed classifications from Step 4, with evidence; or "nothing
+flagged"]
+**Verification:** [see Step 6]
 ```
 
 The `What Went Wrong` table is the highest-value section and the one most often skipped. A recorded
@@ -135,19 +188,21 @@ dead end stops the next session from walking into it again.
 
 ---
 
-## Step 5 — Verify, then report
+## Step 6 — Verify, then report
 
 **Do not assert this ran. Check it.**
 
 1. The wrap file exists at the path you claimed, and re-read it renders correctly.
 2. Every file path listed under Notes actually exists.
 3. Every task item you marked closed is genuinely `[x]` on disk, not just described as closed.
-4. Nothing in the file claims work that did not happen.
+4. Every memory file claimed written, or checked for accuracy, exists at the stated path.
+5. Nothing in the file claims work that did not happen.
 
 A failed check gets fixed now, not noted for later.
 
 Then tell the user, in chat: where the file landed, the task-list health numbers and any cleanup
-flag, and anything you could not verify. Keep it to a few lines.
+flag, any plan files updated, any memory-accuracy rows awaiting a decision, and anything you could
+not verify. Keep it to a few lines.
 
 ---
 

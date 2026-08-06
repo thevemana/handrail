@@ -117,7 +117,8 @@ where it's landing before writing anything.
 ```
 
 *You should see:* it lists the folder first and asks about anything it cannot infer, then writes
-`CLAUDE.md`, `MEMORY.md`, `tasks.md` and an empty `plans/`. Open `CLAUDE.md`. It should describe
+`CLAUDE.md`, `MEMORY.md`, `tasks.md` and a `plans/` folder holding a README that says how plans get
+named and what shape they take. Open `CLAUDE.md`. It should describe
 conventions your folder actually uses, not a generic template. If it reads generic, tell it what it
 missed. The file is yours to correct.
 
@@ -201,8 +202,13 @@ a rule that would cost real damage if missed doesn't get written as a polite req
 
 Writes a dated record of what was done, what was decided **and why**, what is unfinished, and the one
 specific next action. Then it reconciles your task list, closing items on the line with a done-date
-rather than describing them as finished in a paragraph, updates any plan file the work advanced, and
-verifies its own claims against disk before reporting.
+rather than describing them as finished in a paragraph, updates any plan file the work advanced,
+checks any memory file it touched for drift and flags what's stale or wrong rather than rewriting it
+outright, and verifies its own claims against disk before reporting.
+
+**You do not need any of those files first.** If there is no task list, no `plans/`, or no
+`MEMORY.md`, it says so rather than skipping quietly, and offers to create one, or points you at
+`/handrail:scaffold` for the whole set.
 
 That last part matters more than it sounds. A wrap that says a file exists when it does not is worse
 than no wrap, because you will trust it.
@@ -212,14 +218,17 @@ than no wrap, because you will trust it.
 **Reach for it when** you start working in a folder that has no `CLAUDE.md`, or when Claude keeps
 needing the same context re-explained.
 
-Creates `CLAUDE.md`, `MEMORY.md`, `tasks.md` and `plans/`, plus `README.md`, `backlog.md`,
+Proposes `CLAUDE.md`, `MEMORY.md`, `tasks.md` and `plans/`, plus `README.md`, `backlog.md`,
 `CHANGELOG.md`, `decisions.md`, and `.env.example` (if the project takes secrets) if the folder is a
 git repo. The four base files hold four different kinds of state: rules that rarely change, live
 state rewritten each session, open work as a checklist, and approved plans as a record. Keeping them
 separate is the whole trick. Mixing them is what makes such files rot.
 
-It surveys the folder before writing anything, so the conventions come from what you are already
-doing rather than from a template.
+It surveys the folder first and shows you the whole set before writing a single file, so the
+conventions come from what you are already doing rather than from a template. **Nothing is created
+until you say yes.** And if it wants to retire something you already have, an `ideas.md` that is
+really a task list, it searches the folder for anything linking to that file and tells you what
+would break, before it asks.
 
 ### `/handrail:consolidate-folder`
 

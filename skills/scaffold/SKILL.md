@@ -30,7 +30,7 @@ rarely change, **live state** that is rewritten each session, **open work** as a
 already doing that nobody has written down.
 
 1. **List the folder,** including subfolders one level down. One level is deliberate here: this pass
-   is about reading content to derive conventions, and it gets expensive fast. Step 5 goes deeper,
+   is about reading content to derive conventions, and it gets expensive fast. Step 6 goes deeper,
    but only looking for `CLAUDE.md` files, which is cheap.
 2. **Read the first 5 to 10 lines of every existing file.** Headers reveal conventions faster than
    full reads and cost far less context. Look for:
@@ -42,15 +42,28 @@ already doing that nobody has written down.
 3. **Check whether it is a git repo.** `git rev-parse --is-inside-work-tree`. This decides the file set.
 4. **Check for files that already do one of the four jobs** under a different name. An
    `ideas.md`, a `todo.txt`, a `notes-to-self.md` is usually a `tasks.md` or a `MEMORY.md` that
-   nobody named. Fold it in rather than creating a competing second list.
-5. **Map the `CLAUDE.md` chain, three levels each way.** Walk up to three parent folders and down to
+   nobody named. **Flag it here; do not fold it in yet.** Folding one file into another is a
+   deletion wearing a friendlier word, so it goes through the deleting-and-replacing rule below:
+   search for inbound references first, state the blast radius in the proposal, act only after a
+   yes. If the file is only *partly* doing one of the four jobs — a notes file with a todo section
+   and a pile of unrelated content around it — propose extracting the part that matches and
+   leaving the rest exactly where it is. Never delete a whole file on account of the part of it
+   that moved.
+5. **If a `plans/` folder already exists, check its filenames against the convention.** The
+   template below names plans `YYYY-MM-DD-short-slug.md`. Flag anything that doesn't match — an
+   auto-generated name, an undated title — and propose a rename. A rename breaks inbound links
+   exactly like a deletion does, so the same rule applies: search for references to the old
+   filename first, put the blast radius in the proposal, rename only after a yes. If the folder
+   has its own consistent working convention already, keep it and say so; what is not acceptable
+   is a folder running two conventions at once with nobody choosing between them.
+6. **Map the `CLAUDE.md` chain, three levels each way.** Walk up to three parent folders and down to
    three levels of subfolders, and record every `CLAUDE.md` you find and every one you don't. Stop
    early going up at a repo root, a home directory, or a drive root — never walk past one. Read the
    ones you find, nearest first, so the new file repeats none of them. What you are building is a
    picture of where this folder sits in an existing chain, which decides almost everything below.
    Report the map before proposing anything, as a list of paths with `has CLAUDE.md` / `none`
    against each.
-6. **Read `~/.claude/CLAUDE.md`** if it exists, specifically for an already-stated state-file
+7. **Read `~/.claude/CLAUDE.md`** if it exists, specifically for an already-stated state-file
    convention: a `tasks.md` checkbox scheme, a `MEMORY.md` shape, a `plans/` format. If one is
    stated there, use it instead of the defaults in the Templates section below — a global
    convention wins over this skill's own default the moment one exists. If the global file is
@@ -67,6 +80,10 @@ about their own folder (competing task lists, orphaned files, broken links). Wai
 This matters more than it sounds. Scaffolding touches a parent file and sometimes deletes a
 redundant one, and both are hard to notice afterward.
 
+Once you have the yes: write the file set from the templates below, wire the new file into the
+`CLAUDE.md` chain, then run **Last check before finishing** at the end of this file. The pass is not
+done when the files exist; it is done when that check has run.
+
 ## The file set
 
 Always: `CLAUDE.md`, `MEMORY.md`, `tasks.md`, `plans/`.
@@ -74,6 +91,19 @@ Always: `CLAUDE.md`, `MEMORY.md`, `tasks.md`, `plans/`.
 If it is a git repo, add: `README.md`, `backlog.md` (the idea-to-ship ledger), `CHANGELOG.md`,
 `decisions.md` (why non-obvious calls were made), `.env.example` if it takes secrets. Do not add
 these to a notes folder. A notes folder with a `CHANGELOG.md` is noise.
+
+## For git repos: two practices worth proposing
+
+Not mandates — offer these as sensible defaults when scaffolding a git repo, unless the folder
+already has its own working convention (survey step 2 would have found it).
+
+- **Versioning.** SemVer (`X.Y.Z`), tagged in git, recorded in `CHANGELOG.md` on release. This is
+  the standard pairing, not a house style — worth naming even before anyone asks, so a project
+  doesn't drift into ad hoc version strings.
+- **Verify before calling anything done.** Before marking a deliverable finished or a release
+  shipped, have it checked by someone or something with zero context on the work. Self-review
+  reliably misses what a fresh read catches — the check should try to reproduce the claim, not just
+  read it. Worth a line in the new CLAUDE.md's Conventions section if the repo ships things.
 
 ## Writing rules
 
@@ -95,19 +125,35 @@ These are what separate a scaffold that helps from one that becomes a second sou
    own. This is the single most common defect in these files.
 6. **Date the file.** A `Last updated:` line under the title, and update it when you edit.
 
-## Deleting or replacing an existing file
+## Deleting, replacing, or moving an existing file
 
-**Search for inbound references before proposing the deletion, not after.** Grep the whole
-surrounding tree for the filename and for wiki-style `[[links]]` to it. State the blast radius in
-the proposal so the person is approving the real change and not a smaller one.
+**Search for inbound references before proposing the change, not after** — a rename or a folder
+move breaks a link exactly the same way a deletion does, and gets missed more often because it
+doesn't feel destructive. Grep the whole surrounding tree for the filename, the old path, and for
+wiki-style `[[links]]` to it. State the blast radius in the proposal so the person is approving the
+real change and not a smaller one.
 
-When a file is retired, preserve item ordering if anything references its contents by number, and
-leave a short banner in each file whose links you retarget saying what moved and when.
+**Search with the ignore rules turned off** — `rg --no-ignore --hidden -g '!.git/'`, or the
+equivalent for whatever tool you have. Ripgrep, and anything built on it, honours `.gitignore` by
+default, and so does `git grep`. The files most likely to reference the thing you are about to move
+are exactly the ones normally kept out of git: `tasks.md`, `MEMORY.md`, `plans/`, wrap records,
+scratch notes. A default search skips them silently, without reporting that it skipped anything, so
+it returns few hits rather than an error. That turns a missed reference into a confident "blast
+radius: none," which is worse than not having checked, because the person approves a bigger change
+than the one they were shown.
+
+When a file is retired, renamed, or moved, preserve item ordering if anything references its
+contents by number, and leave a short banner in each file whose links you retarget saying what
+moved and when. If a "source of truth" file exists for the area (an index, a canon doc), its
+resolution note is the one place this is guaranteed to get read later — don't skip it even if every
+other link got fixed.
 
 ## Wiring into the chain
 
-A `CLAUDE.md` that nothing links to is discoverable only by accident. Use the map from survey step 5
-and wire the new file in both directions, then say what you wired.
+A `CLAUDE.md` that nothing links to is discoverable only by accident. Use the map from survey step 6
+and wire the new file in both directions, then say what you wired. Every wiring edit lands in a file
+other than the one being scaffolded, so all of it goes in the proposal with the exact paths, before
+anything is written — the same rule the connector case below states for itself.
 
 **Link up.** The new file's header names its nearest ancestor with a `CLAUDE.md`, as a relative path:
 `Inherits from [parent](../CLAUDE.md)`, or `../../CLAUDE.md` if the nearest one is two levels up.
@@ -209,6 +255,7 @@ second copy that drifts, so it doesn't anymore.
 
 ```markdown
 # plans — [folder name]
+Last updated: YYYY-MM-DD
 
 Approved plans land here, one file per plan, named YYYY-MM-DD-short-slug.md:
 
@@ -224,9 +271,20 @@ If a plan changes materially mid-execution, update the same file and note what c
 start a second one.
 ```
 
-Optional, and worth turning on: setting `plansDirectory: "plans"` in `~/.claude/settings.json` makes
-Claude Code auto-save its plan-mode output here in every project, so a plan survives even if nobody
-remembers to file it.
+**Offer this one and wait for a yes; do not apply it quietly.** Setting `plansDirectory: "plans"` in
+`~/.claude/settings.json` makes Claude Code auto-save its plan-mode output into `plans/` in every
+project, so a plan survives even if nobody remembers to file it. It is one line, but it sits in a
+file outside this folder and it changes behaviour in every project rather than only this one, which
+is exactly why it needs the same yes as any other edit outside the scaffold. Make the edit once it
+has one. (What the closing section rules out is a skill *enforcing* something on its own; a settings
+change the person approved is a different thing.)
+
+## Last check before finishing
+
+Before announcing the result, re-open every file this pass touched or created and confirm its
+`Last updated:` line matches today. A correct edit with a stale date is still a miss — it's what
+makes a later session trust the wrong version over the right one. This is cheap to check and easy
+to skip anyway; check it.
 
 ## What this skill cannot do
 
