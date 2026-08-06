@@ -12,10 +12,13 @@ quietly didn't run. Retrieval failing is visible; reconciliation failing is not,
 the half that had gone unwritten. This release closes that gap in the three skills that write state,
 adds no new skills, and deliberately invents no new vocabulary to do it.
 
-**Verification at the time of writing:** the hook unit tests pass and the plugin manifest validates.
-Neither says anything about how a skill behaves in a real session. The second-machine install test
-for this build has not been run. If this ships before it is, that is the same explicit call recorded
-above for 0.2.0 and 0.3.0 — stated here rather than implied.
+**Verification:** the hook unit tests pass (21/21) and the plugin manifest validates. Neither says
+anything about how a skill behaves in a real session. **This release ships without the live
+second-machine install test, and that is a deliberate call, not an oversight** — the same one on
+record for 0.2.0 and 0.3.0, which makes this the third consecutive release shipped on doc checks
+alone. `Testing notes — 0.4.0.1.md` was written for this build and has not been run; neither has
+0.3.0.1's. A doc-consistency cold-read of the three changed skills, which 0.3.0 did have, was also
+not run for this one. Recorded here so the gap is on the record rather than discovered later.
 
 **One thing this release could not fix.** Four of the changes below (say what you didn't check,
 check the copy that will actually be read, the survey's unread-limits line, and putting unverified
