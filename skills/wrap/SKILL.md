@@ -41,6 +41,23 @@ already sitting at that folder's root, move them in during the same edit and say
 rule as everywhere else in this skill: name the exact path, wait for a yes, create nothing without
 one. Don't build scaffolding logic here; route to the skill that already does it properly.
 
+**Then read the last two or three wraps already in that folder.** They are short, they are right
+there, and they are the only place a repeating problem is visible. Every wrap ends with a working
+artifact and a next action, which is exactly why a project can spend weeks stuck without any single
+session looking stuck.
+
+If the same next action, or the same open thread, has carried across **three consecutive wraps
+including this one**, say so in the file under a `## Same as last time?` heading — name the wraps by
+filename and quote the line that keeps recurring. Three is the threshold, not two: twice is an
+ordinary week, three times means something is in the way that nobody has named yet. **Report the
+repetition; do not diagnose it and do not fix it.** Say what repeated and how many times, and let
+the person decide what it means.
+
+**The heading appears only when it fires.** A project moving normally never grows one, which is
+what makes it worth reading when it does. If there are fewer than three prior wraps, or nothing
+recurs, write nothing — no empty heading, no "nothing to report" row. Say it in chat instead, so
+the check is on record as having run.
+
 ---
 
 ## Step 2 — Reconcile the task list (if there is one)
@@ -123,10 +140,20 @@ it. Put every non-Confirmed result in the wrap file with the evidence and stop t
 adjudicates. If the person confirms a correction, that edit happens now, in this same step, under
 the guardrails below — never folded silently into the Write sub-step above.
 
+**Confirmed needs evidence too.** Say how it was checked: the file read, the command run, the thing
+it was compared against. Requiring evidence for Stale, Wrong and Unverifiable but not for Confirmed
+is backwards — Confirmed is the one verdict that tells the next reader to stop checking, so it is
+the one that most needs to show its work. A Confirmed with no method behind it is a guess wearing a
+verdict, and it is indistinguishable from a real one once the session is over.
+
 Guardrails on any memory file touched — read for Check or written in Write — this session:
 
 - **Cap it at three.** A fourth means stop touching memory files and move on to Step 5 with what's
   covered so far. The cap limits memory work, not the rest of the wrap — Steps 5 and 6 still run.
+  **When the cap is what stopped the check, name the files it did not reach**, by path, in the wrap
+  file. Same move as `"no task list, declined"`: a wrap that silently checked three of six memory
+  files reads exactly like one that checked all six, and the next session has no way to tell which
+  it got.
 - **Diff before writing** to any existing memory file. Show the before and after; never silently
   overwrite one.
 - **Never delete a memory line.** Supersede it with a new, dated line instead — a wrong memory dated
@@ -151,17 +178,22 @@ Use this structure.
 
 ## Decisions Made
 
-| Decision | Reasoning |
-|---|---|
-| [what was decided] | [why, including what was rejected] |
+| Decision | Reasoning | Based on |
+|---|---|---|
+| [what was decided] | [why, including what was rejected] | [what it rests on: a file read, a command run, a test result, a person's answer — or "judgment call, nothing checked"] |
 
 ## Next Actions and Open Threads
 - [Pending action, unresolved question, or known gap]
 
 Next session: start with [one specific action].
 
+## Same as last time?
+[Only when it fires, per Step 1. What has carried across three consecutive wraps, which wraps by
+filename, and the recurring line quoted. Delete the whole heading when it doesn't apply.]
+
 ## Durable Facts
 [Only non-obvious things that outlive this session. Not what re-reading the code would tell you.
+Each one says where it came from — the file, the command, the person — or "assumed, not checked".
 Empty is a valid answer.]
 
 ## What Went Wrong
@@ -178,13 +210,20 @@ Empty is a valid answer.]
 **Plans updated:** [each file touched and what changed; or "no plan used"; or "no plans/ here,
 created one"; or "no plans/, declined"]
 **Memory updated:** [what was written, and where; or "no memory file applies"]
-**Memory accuracy:** [any non-Confirmed classifications from Step 4, with evidence; or "nothing
-flagged"]
-**Verification:** [see Step 6]
+**Memory accuracy:** [every classification from Step 4 with the evidence behind it, Confirmed
+included; plus any files the three-file cap stopped it reaching, by path; or "nothing flagged"]
+**Verification:** [what was checked and how, per Step 6, plus anything that could not be checked
+and why it couldn't]
 ```
 
 The `What Went Wrong` table is the highest-value section and the one most often skipped. A recorded
 dead end stops the next session from walking into it again.
+
+The `Based on` column and the sourcing line in `Durable Facts` exist for the same reason. A decision
+with reasoning but no source, and a fact with neither, both read as settled three months later, and
+nothing in the file distinguishes the one that was checked from the one that sounded right at the
+time. "Judgment call, nothing checked" is a perfectly good answer — it is an unfilled column that
+does the damage, not an honest one.
 
 ---
 
@@ -200,9 +239,16 @@ dead end stops the next session from walking into it again.
 
 A failed check gets fixed now, not noted for later.
 
+**Anything you could not verify goes in the file, not only in chat.** Write it into the
+`Verification:` field: what was unchecked, and why it couldn't be. The chat disappears when the
+session ends and the file is what the next session actually opens, so a wrap carrying no caveats
+reads as one where everything was checked. That is the same unmarked silence this skill refuses to
+accept everywhere else — there is no reason its own output should be exempt.
+
 Then tell the user, in chat: where the file landed, the task-list health numbers and any cleanup
-flag, any plan files updated, any memory-accuracy rows awaiting a decision, and anything you could
-not verify. Keep it to a few lines.
+flag, any plan files updated, any memory-accuracy rows awaiting a decision, whether the
+`## Same as last time?` check fired or not, and anything you could not verify. Keep it to a few
+lines.
 
 ---
 
