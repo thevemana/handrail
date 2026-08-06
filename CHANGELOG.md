@@ -4,6 +4,22 @@ All notable changes to handrail are recorded here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.1] - 2026-08-06
+
+### Fixed
+
+- **`tasks-format.md` pointed at the wrong survey step.** It told the reader that a `tasks.md`
+  convention already stated in the global `~/.claude/CLAUDE.md` wins over the default, and to see
+  "`scaffold`'s survey step 6" for it. That is step 7; step 6 maps the `CLAUDE.md` chain and has
+  nothing to do with it. An off-by-one left over from the 0.3.0 renumbering, which shipped in 0.3.0
+  and 0.4.0 before anyone followed the pointer.
+
+  Worth naming rather than fixing quietly, because it is the same defect class 0.4.0 is built
+  around: a confident cross-reference that had been wrong for two releases, in a file whose whole
+  job is to be the one place a format is defined. Nothing detected it, because a wrong number reads
+  exactly like a right one. The rest of the shipped files were swept at the same time; the other
+  three step references are correct.
+
 ## [0.4.0] - 2026-08-06
 
 Three skills already handled *continuity* well — carrying what happened into the next session. None
@@ -323,6 +339,7 @@ First release. Never previously published under any name.
 Claude Code auto-updates installed plugins in the background, so anything changed inside one gets
 overwritten silently.
 
+[0.4.1]: https://github.com/thevemana/handrail/releases/tag/v0.4.1
 [0.4.0]: https://github.com/thevemana/handrail/releases/tag/v0.4.0
 [0.3.0]: https://github.com/thevemana/handrail/releases/tag/v0.3.0
 [0.2.0]: https://github.com/thevemana/handrail/releases/tag/v0.2.0

@@ -5,7 +5,7 @@ reconciles it). If you're reading this from another skill, this is the one place
 defined — don't restate it, link back here.
 
 **This is the default, not a mandate.** If `~/.claude/CLAUDE.md` already states its own
-`tasks.md` convention (see `scaffold`'s survey step 6), that wins — use it instead of what's below.
+`tasks.md` convention (see `scaffold`'s survey step 7), that wins — use it instead of what's below.
 
 ## Checkbox states
 
