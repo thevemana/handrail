@@ -68,6 +68,26 @@ already doing that nobody has written down.
    stated there, use it instead of the defaults in the Templates section below — a global
    convention wins over this skill's own default the moment one exists. If the global file is
    silent on it, or doesn't exist, fall back to the defaults as usual.
+8. **Say where the folder disagrees with itself, and do not settle it.** Everything above is a pass
+   over the folder's own claims about itself, and nothing so far asks whether those claims agree.
+   The headers are already read, so this costs one more look at what is in context. Go looking for
+   two files stating the same thing differently: two task lists with different open items, a README
+   describing a layout the folder no longer has, a status line contradicted by a dated note
+   somewhere else, two files each behaving as the source of truth for one subject. Report each as a
+   **pair** — both claims, both paths, both dates where they have them — and stop there.
+
+   **Do not pick a winner, and do not quietly write the version you find more convincing into the
+   new `CLAUDE.md`.** Deriving a convention from a folder that contradicts itself, without saying
+   that it does, is how one of the two versions becomes permanent without anyone having chosen it —
+   and the person approving the scaffold is the only one who can choose. If nothing contradicts, say
+   "nothing contradicts". That is a finding, not an empty section.
+
+**Say what the survey did not read.** It read the first 5 to 10 lines of each file and went one
+level into subfolders, so everything below those lines and everything deeper is unread, and every
+convention proposed above is derived from headers rather than whole files. State that in the report
+alongside the findings. A survey's limits are invisible in its own output: an incomplete read that
+does not say so is indistinguishable from a complete one, and it is the confident version that gets
+acted on.
 
 If the folder is empty or nearly so, say so plainly. The scaffold will be generic, and that is fine,
 but do not present a generic file as if it were derived from anything.
@@ -75,7 +95,8 @@ but do not present a generic file as if it were derived from anything.
 ## Then propose, and wait
 
 State what you will create, what you will change, and what you found that the person may not know
-about their own folder (competing task lists, orphaned files, broken links). Wait for a yes.
+about their own folder (competing task lists, orphaned files, broken links, files that contradict
+each other), plus what the survey did not read. Wait for a yes.
 
 This matters more than it sounds. Scaffolding touches a parent file and sometimes deletes a
 redundant one, and both are hard to notice afterward.
@@ -104,6 +125,11 @@ already has its own working convention (survey step 2 would have found it).
   shipped, have it checked by someone or something with zero context on the work. Self-review
   reliably misses what a fresh read catches — the check should try to reproduce the claim, not just
   read it. Worth a line in the new CLAUDE.md's Conventions section if the repo ships things.
+  **Check the copy that will actually be used, not the one you have open.** A claim can be true in
+  the working tree and false in the copy someone else gets: a tag that exists locally and not on the
+  remote, a README rendered from a different branch, an install still serving a cached older
+  version. This is the error that survives review, because the claim really was verified — against
+  the wrong copy.
 
 ## Writing rules
 
@@ -119,7 +145,9 @@ These are what separate a scaffold that helps from one that becomes a second sou
    too, so don't restate it here or anywhere else.
 4. **Prefer a table with a status column** over prose, whenever describing how something works. Give
    each row a real name from the filesystem or the code, and mark whether it is live, built,
-   designed, or assumed. Prose hides the gap between what exists and what was intended.
+   designed, assumed, or unconfirmed. `assumed` means nobody checked; `unconfirmed` means someone
+   tried to check and could not, which is a different thing and worth its own word. Prose hides the
+   gap between what exists and what was intended.
 5. **Write for the agent, not for the human.** A note that says "remember to check X" only fires if a
    human rereads it. The same note as "before doing Y, check X" is an instruction that fires on its
    own. This is the single most common defect in these files.
@@ -209,6 +237,26 @@ Last updated: YYYY-MM-DD
 [The patterns derived from the survey. Naming, file structure, anything a newcomer would otherwise
 have to infer by reading everything. Table if there is more than one kind of file.]
 
+## Where the real answer lives
+For anything two files could both claim: which one settles it, and what that rests on.
+
+| Subject | Settled by | Based on | How well supported |
+|---|---|---|---|
+| [what the claim is about] | [the file, command, or person that settles it] | [what that rests on] | [Confirmed / One source only / Sources disagree / Not found] |
+
+**Confirmed** — checked against the thing itself, not against another document.
+**One source only** — one place says so and nothing contradicts it.
+**Sources disagree** — two places say different things, and it is not settled yet.
+**Not found** — nothing here answers it.
+
+## Things that don't match
+Contradictions found and not yet resolved. Each row keeps both sides. Resolving one means deleting
+the row and saying so, not editing one side into agreement with the other.
+
+| What | One side says | The other says | Found |
+|---|---|---|---|
+| [subject] | [claim, and where it came from] | [claim, and where it came from] | YYYY-MM-DD |
+
 ## Subfolders
 Only those with their own `CLAUDE.md`. A subfolder without one inherits this file and needs no row.
 
@@ -219,6 +267,22 @@ Only those with their own `CLAUDE.md`. A subfolder without one inherits this fil
 ## Gotchas
 [Anything that has already gone wrong here, or that would if someone assumed the obvious thing.]
 ```
+
+**On those two sections.** `Where the real answer lives` is what turns "one fact, one owner" from a
+rule into something someone can actually operate: it names the owner per subject instead of leaving
+it implied. Fill it from the survey — the load-bearing files it found are the candidates.
+
+**Leave the last column out until some subject in the table has more than one source.** A freshly
+scaffolded folder has one source for everything, and a column reading `One source only` four rows
+down teaches people to stop reading the column before it has ever told them anything. Add it the
+first time two sources exist for one subject; that is when it starts carrying information. Each
+label says what the evidence is, so nobody has to look up what it means — keep it that way, and do
+not swap in shorter words that need a legend to decode.
+
+`Things that don't match` starts empty in most folders and should stay empty rather than being
+filled with hypotheticals. It exists so that a contradiction found during the survey (step 8) has
+somewhere to live besides the chat log, and so the next person to find the same one can see it was
+already known and deliberately left open.
 
 ### MEMORY.md
 
@@ -233,10 +297,14 @@ session rather than appending.
 [Two or three sentences on what just happened.]
 
 ## Decisions made
-- [Decision]: [why]
+- [Decision]: [why] — based on: [the file, command, test, or person it rests on, or "judgment call,
+  nothing checked"]
 
 ## Open threads
 - [Thread]: [status] — next action: [what]
+
+## Things that don't match yet
+- [What disagrees with what, and where each side came from] — open since YYYY-MM-DD
 
 ## Artifacts produced
 - [path]: [what it is]
@@ -244,6 +312,15 @@ session rather than appending.
 ## Recommended first action next session
 [One specific sentence.]
 ```
+
+**Every decision row carries what it was based on**, and "judgment call, nothing checked" is a
+perfectly good value. A decision written here with reasoning but no source reads as settled fact by
+the next session, which has no way to tell the checked ones from the ones that merely sounded right
+at the time. The empty column is what does the damage, not an honest one.
+
+`Things that don't match yet` is the session-level counterpart to the `CLAUDE.md` section of almost
+the same name: that one holds contradictions about the folder that are expected to persist, this one
+holds the ones this session ran into and could not settle. Both keep both sides.
 
 ### tasks.md
 
@@ -270,6 +347,40 @@ Approved plans land here, one file per plan, named YYYY-MM-DD-short-slug.md:
 If a plan changes materially mid-execution, update the same file and note what changed. Do not
 start a second one.
 ```
+
+### decisions.md
+
+Git repos only, alongside `README.md`, `backlog.md` and `CHANGELOG.md`. It holds the *why* behind
+calls that would otherwise be re-argued from scratch by whoever arrives next, including whoever that
+is six months from now with no memory of this week.
+
+```markdown
+# Decisions — [project name]
+Last updated: YYYY-MM-DD
+
+Why the non-obvious calls were made. One entry per decision, newest at the bottom. Numbered, and the
+numbers are never reused or renumbered, because other files cite them.
+
+## 1. [The decision, written as what is true now, not as the question that was asked]
+
+**Decided:** YYYY-MM-DD
+**Based on:** [what this rests on — a test result, a measurement, a document read, someone's
+answer — or "judgment call, nothing measured". Say which; they are not the same and only one of
+them is checkable later.]
+
+[Two or three paragraphs. What was decided and the reasoning, in enough detail that someone who
+disagrees can see where they'd have to attack it.]
+
+**Rejected:** [the alternative, and why it lost. An entry with nothing rejected is usually a note
+rather than a decision — consider whether it belongs here at all.]
+
+**Would revisit if:** [the specific thing that would change the answer. "If it stops working" is not
+specific.]
+```
+
+**Write the entry when the call is made, not at release.** Reconstructed reasoning is how a guess
+gets written down as an analysis — by the time anyone sits down to fill this in retroactively, the
+alternatives that were live at the time have already been forgotten.
 
 **Offer this one and wait for a yes; do not apply it quietly.** Setting `plansDirectory: "plans"` in
 `~/.claude/settings.json` makes Claude Code auto-save its plan-mode output into `plans/` in every
